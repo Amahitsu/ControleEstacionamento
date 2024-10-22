@@ -3,36 +3,26 @@
 BEGIN;
 
 
-ALTER TABLE IF EXISTS public."Cupom" DROP CONSTRAINT IF EXISTS "PlacaID_FK";
+DROP TABLE IF EXISTS public.cupom;
 
-ALTER TABLE IF EXISTS public."Tarifas" DROP CONSTRAINT IF EXISTS "tipoVeiculo_FK";
-
-ALTER TABLE IF EXISTS public."Placa" DROP CONSTRAINT IF EXISTS "tipoVeiculo_FK";
-
-ALTER TABLE IF EXISTS public."Placa" DROP CONSTRAINT IF EXISTS "modeloId_FK";
-
-
-
-DROP TABLE IF EXISTS public."Cupom";
-
-CREATE TABLE IF NOT EXISTS public."Cupom"
+CREATE TABLE IF NOT EXISTS public.cupom
 (
-    id bigint NOT NULL,
-    "dataHoraEntrada" timestamp with time zone NOT NULL,
-    "dataHoraSaida" timestamp with time zone,
+    id bigserial NOT NULL,
+    "dataHoraEntrada" time without time zone NOT NULL,
+    "dataHoraSaida" timestamp without time zone,
     descricao character varying(100),
     "valorTotal" numeric(10, 2),
-    "placaID" bigint,
+    "placaID" bigserial,
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public."Tarifas";
+DROP TABLE IF EXISTS public.tarifas;
 
-CREATE TABLE IF NOT EXISTS public."Tarifas"
+CREATE TABLE IF NOT EXISTS public.tarifas
 (
-    id bigint NOT NULL,
-    hora time with time zone NOT NULL,
-    "tipoVeiculoId" bigint NOT NULL,
+    id bigserial NOT NULL,
+    hora timestamp without time zone NOT NULL,
+    "tipoVeiculoId" bigserial NOT NULL,
     valor numeric(10, 2),
     PRIMARY KEY (id)
 );
@@ -41,60 +31,27 @@ DROP TABLE IF EXISTS public."tipoVeiculo";
 
 CREATE TABLE IF NOT EXISTS public."tipoVeiculo"
 (
-    id bigint NOT NULL,
-    veiculo character varying(10) NOT NULL,
-    CONSTRAINT "TipoVeiculoId_UK" UNIQUE (id)
+    id bigserial NOT NULL,
+    veiculo character varying(10) NOT NULL
 );
 
-DROP TABLE IF EXISTS public."Placa";
+DROP TABLE IF EXISTS public.placa;
 
-CREATE TABLE IF NOT EXISTS public."Placa"
+CREATE TABLE IF NOT EXISTS public.placa
 (
-    id bigint NOT NULL,
-    "modeloId" bigint,
+    id bigserial NOT NULL,
+    "modeloId" bigserial,
     placa character varying(7) NOT NULL,
-    "tipoVeiculoId" bigint,
+    "tipoVeiculoId" bigserial,
     PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public."Modelo";
+DROP TABLE IF EXISTS public.modelo;
 
-CREATE TABLE IF NOT EXISTS public."Modelo"
+CREATE TABLE IF NOT EXISTS public.modelo
 (
-    id bigint NOT NULL,
+    id bigserial NOT NULL,
     "nomeModelo" character varying(50),
     PRIMARY KEY (id)
 );
-
-ALTER TABLE IF EXISTS public."Cupom"
-    ADD CONSTRAINT "PlacaID_FK" FOREIGN KEY ("placaID")
-    REFERENCES public."Placa" (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."Tarifas"
-    ADD CONSTRAINT "tipoVeiculo_FK" FOREIGN KEY ("tipoVeiculoId")
-    REFERENCES public."tipoVeiculo" (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."Placa"
-    ADD CONSTRAINT "tipoVeiculo_FK" FOREIGN KEY ("tipoVeiculoId")
-    REFERENCES public."tipoVeiculo" (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."Placa"
-    ADD CONSTRAINT "modeloId_FK" FOREIGN KEY ("modeloId")
-    REFERENCES public."Modelo" (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
 END;
