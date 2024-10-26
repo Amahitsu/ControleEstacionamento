@@ -11,18 +11,17 @@ export async function GET(): Promise<NextResponse> {
   }
 }
 
-
-/*
 export async function POST(
   placa: string,
-  id_cor: string,
   id_modelo: string,
 ): Promise<NextResponse> {
   try {
-    const { rows } =
-      await sql`INSERT INTO cupom (placa, id_cor, id_modelo, data_cadastro)
-      VALUES (${placa}, ${id_cor}, ${id_modelo}, ${DateUtils.GetCurrentDateAsString()});`;
-      return NextResponse.json({ data: rows }, { status: 200 });
+    const currentDate = new Date().toISOString(); // Data atual no formato ISO
+    const { rows } = await sql`
+      INSERT INTO cupom (dataHoraEntrada)
+      VALUES (${currentDate});
+    `;
+    return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ data: error }, { status: 500 });
   }

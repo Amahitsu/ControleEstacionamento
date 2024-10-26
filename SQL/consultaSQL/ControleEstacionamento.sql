@@ -3,6 +3,16 @@
 BEGIN;
 
 
+ALTER TABLE IF EXISTS public.cupom DROP CONSTRAINT IF EXISTS "placaID_FK";
+
+ALTER TABLE IF EXISTS public.tarifas DROP CONSTRAINT IF EXISTS "tipoVeiculoId_FK";
+
+ALTER TABLE IF EXISTS public.placa DROP CONSTRAINT IF EXISTS "tipoVeiculo_FK";
+
+ALTER TABLE IF EXISTS public.placa DROP CONSTRAINT IF EXISTS "modelo_FK";
+
+
+
 DROP TABLE IF EXISTS public.cupom;
 
 CREATE TABLE IF NOT EXISTS public.cupom
@@ -21,9 +31,9 @@ DROP TABLE IF EXISTS public.tarifas;
 CREATE TABLE IF NOT EXISTS public.tarifas
 (
     id bigserial NOT NULL,
-    hora timestamp without time zone NOT NULL,
+    "horaCobrada" time without time zone NOT NULL,
     "tipoVeiculoId" bigserial NOT NULL,
-    valor numeric(10, 2),
+    valor numeric(10, 2) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -32,7 +42,8 @@ DROP TABLE IF EXISTS public."tipoVeiculo";
 CREATE TABLE IF NOT EXISTS public."tipoVeiculo"
 (
     id bigserial NOT NULL,
-    veiculo character varying(10) NOT NULL
+    veiculo character varying(10) NOT NULL,
+    PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS public.placa;
@@ -40,9 +51,10 @@ DROP TABLE IF EXISTS public.placa;
 CREATE TABLE IF NOT EXISTS public.placa
 (
     id bigserial NOT NULL,
-    "modeloId" bigserial,
     placa character varying(7) NOT NULL,
-    "tipoVeiculoId" bigserial,
+    "modeloId" bigserial NOT NULL,
+    "tipoVeiculoId" bigserial NOT NULL,
+    cor character varying(50) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -51,7 +63,39 @@ DROP TABLE IF EXISTS public.modelo;
 CREATE TABLE IF NOT EXISTS public.modelo
 (
     id bigserial NOT NULL,
-    "nomeModelo" character varying(50),
+    "nomeModelo" character varying(50)[] NOT NULL,
     PRIMARY KEY (id)
 );
+
+ALTER TABLE IF EXISTS public.cupom
+    ADD CONSTRAINT "placaID_FK" FOREIGN KEY ("placaID")
+    REFERENCES public.placa (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.tarifas
+    ADD CONSTRAINT "tipoVeiculoId_FK" FOREIGN KEY ("tipoVeiculoId")
+    REFERENCES public."tipoVeiculo" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.placa
+    ADD CONSTRAINT "tipoVeiculo_FK" FOREIGN KEY ("tipoVeiculoId")
+    REFERENCES public."tipoVeiculo" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.placa
+    ADD CONSTRAINT "modelo_FK" FOREIGN KEY ("modeloId")
+    REFERENCES public.modelo (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
 END;
