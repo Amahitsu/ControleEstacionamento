@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(): Promise<NextResponse> {
   try {
     const { rows } =
-      await sql`SELECT* FROM "placa"`;
+      await sql`SELECT* FROM placa`;
       return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ data: error }, { status: 500 });
