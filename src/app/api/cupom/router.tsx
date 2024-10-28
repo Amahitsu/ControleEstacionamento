@@ -11,15 +11,17 @@ export async function GET(): Promise<NextResponse> {
   }
 }
 
-export async function POST(
-  placa: string,
-  id_modelo: string,
+// Função para registrar o momento de entrada
+export async function POSTEntrada(
+  placaId: number,
+  descricao: string
 ): Promise<NextResponse> {
   try {
-    const currentDate = new Date().toISOString(); // Data atual no formato ISO
+    const currentDate = new Date().toISOString();
     const { rows } = await sql`
-      INSERT INTO cupom (dataHoraEntrada)
-      VALUES (${currentDate});
+      INSERT INTO cupom (dataHoraEntrada, descricao, placaID)
+      VALUES (${currentDate}, ${descricao}, ${placaId})
+      RETURNING *;
     `;
     return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
@@ -27,30 +29,46 @@ export async function POST(
   }
 }
 
-/*
-export async function PUT(
-  id: number,
-  placa: string,
-  id_cor: string,
-  id_modelo: string,
+// Função para registrar o momento de saída
+export async function POSTSaida(
+  cupomId: number,
+  valorTotal: number
 ): Promise<NextResponse> {
   try {
-    const { rows } = await sql`UPDATE carros
-      SET placa = ${placa}, id_cor = ${id_cor}, id_modelo = ${id_modelo}
-      WHERE id = ${id};`;
-    return ApiHandler.ResponseToJson(rows, 200);
+    const currentDate = new Date().toISOString();
+    const { rows } = await sql`
+      UPDATE cupom
+      SET dataHoraSaida = ${currentDate}, valorTotal = ${valorTotal}
+      WHERE id = ${cupomId}
+      RETURNING *;
+    `;
+    return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
-    return ApiHandler.ResponseToJson(error, 500);
+    return NextResponse.json({ data: error }, { status: 500 });
   }
+}
+
+export async function PUT(
+  id: number,
+  descricao: string,
+  placaId: number,
+): Promise<NextResponse> {
+  try {
+    const { rows } = await sql`UPDATE cupom
+      SET descricao = ${descricao}, placaId= ${placaId},
+      WHERE id = ${id};`
+      return NextResponse.json({ data: rows }, { status: 200 });
+    } catch (error) {
+      return NextResponse.json({ data: error }, { status: 500 });
+    }
 }
 
 export async function DELETE(id: number): Promise<NextResponse> {
   try {
-    const { rows } = await sql`DELETE FROM carros
+    const { rows } = await sql`DELETE FROM cupom
       WHERE id = ${id}`;
-    return ApiHandler.ResponseToJson(rows, 200);
-  } catch (error) {
-    return ApiHandler.ResponseToJson(error, 500);
-  }
+      return NextResponse.json({ data: rows }, { status: 200 });
+    } catch (error) {
+      return NextResponse.json({ data: error }, { status: 500 });
+    }
 }
-*/

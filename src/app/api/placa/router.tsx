@@ -42,3 +42,13 @@ export async function PUT(
     return NextResponse.json({ data: error }, { status: 500 });
   }
 }
+
+export async function DELETE(id: number): Promise<NextResponse> {
+  try {
+    const { rows } = await sql`DELETE FROM placa
+      WHERE id = ${id}`;
+      return NextResponse.json({ data: rows }, { status: 200 });
+    } catch (error) {
+      return NextResponse.json({ data: error }, { status: 500 });
+    }
+}
