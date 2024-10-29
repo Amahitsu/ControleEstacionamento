@@ -2,7 +2,7 @@ import { sql } from "@vercel/postgres";
 import { NextResponse } from "next/server";
 
 // Função para registrar o momento de saída
-export async function POSTSaida(
+export async function POST(
     cupomId: number,
     valorTotal: number
   ): Promise<NextResponse> {
