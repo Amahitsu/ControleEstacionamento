@@ -14,7 +14,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     `;
     
     return NextResponse.json({ data: rows }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
     return NextResponse.json({ message: 'Ocorreu um erro ao criar o cupom', error: errorMessage }, { status: 500 });
   }
