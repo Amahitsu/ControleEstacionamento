@@ -46,12 +46,24 @@ export async function PUT(
   }
 }
 
-export async function DELETE(id: number): Promise<NextResponse> {
+export async function DELETE(request: Request): Promise<NextResponse> {
   try {
-    const { rows } = await sql`DELETE FROM tarifas
-      WHERE id = ${id}`;
-      return NextResponse.json({ data: rows }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ data: error }, { status: 500 });
+    const { id } = await request.json(); // Lendo o ID do corpo da requisição
+
+    // Executando o DELETE
+    const result = await sql`
+      DELETE FROM "tarifa"
+      WHERE id = ${id}
+    `;
+
+    // Se result não tem rowCount, pode simplesmente verificar se houve erro
+    if (result?.rowCount && result.rowCount > 0) {
+      return NextResponse.json({ message: 'Tarifa deletada com sucesso!' }, { status: 200 });
+    } else {
+      return NextResponse.json({ message: 'Tarifa não encontrada' }, { status: 404 });
+    }
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    return NextResponse.json({ message: 'Erro ao deletar a tarifa', error: errorMessage }, { status: 500 });
   }
 }
