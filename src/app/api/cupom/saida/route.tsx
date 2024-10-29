@@ -1,10 +1,3 @@
-
-Para corrigir seu código, precisamos ajustar a função POST para receber um NextRequest como argumento, em vez de números diretamente, já que o Next.js espera que a função API tenha essa estrutura. Você também precisará ler os dados do corpo da requisição usando request.json().
-
-Aqui está o código corrigido:
-
-typescript
-Copiar código
 import { sql } from "@vercel/postgres";
 import { NextResponse, NextRequest } from "next/server";
 
