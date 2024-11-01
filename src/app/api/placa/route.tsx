@@ -43,24 +43,3 @@ export async function PUT(
   }
 }
 
-export async function DELETE(request: Request): Promise<NextResponse> {
-  try {
-    const { id } = await request.json(); // Lendo o ID do corpo da requisição
-
-    // Executando o DELETE
-    const result = await sql`
-      DELETE FROM "placa"
-      WHERE id = ${id}
-    `;
-
-    // Se result não tem rowCount, pode simplesmente verificar se houve erro
-    if (result?.rowCount && result.rowCount > 0) {
-      return NextResponse.json({ message: 'Placa deletado com sucesso!' }, { status: 200 });
-    } else {
-      return NextResponse.json({ message: 'Placa não encontrada' }, { status: 404 });
-    }
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-    return NextResponse.json({ message: 'Erro ao deletar a placa', error: errorMessage }, { status: 500 });
-  }
-}

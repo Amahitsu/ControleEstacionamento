@@ -10,6 +10,7 @@ const TableSection: React.FC = () => {
                         <th>Cupom</th>
                         <th>Hr Entrada</th>
                         <th>Placa</th>
+                        <th>Tipo</th>
                         <th>Modelo</th>
                         <th>Descrição</th>
                     </tr>
@@ -19,6 +20,7 @@ const TableSection: React.FC = () => {
                         <td className={styles.redText}>1023</td>
                         <td className={styles.redText}>21:25</td>
                         <td className={styles.redText}>FFF3520</td>
+                        <td className={styles.redText}>Carro</td>
                         <td className={styles.redText}>HB20</td>
                         <td className={styles.redText}>Cinza</td>
                     </tr>
