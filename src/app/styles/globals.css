@@ -30,7 +30,7 @@ table th, table td {
     text-wrap: balance;
   }
 }
-/* src/app/styles/globals.css */
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
@@ -41,29 +41,29 @@ body {
 .formSection {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Espaçamento entre os campos */
-  max-width: 400px; /* Largura máxima do formulário */
-  margin: auto; /* Centraliza o formulário */
-  padding: 20px; /* Padding interno do formulário */
-  border: 1px solid #ccc; /* Borda do formulário */
-  border-radius: 8px; /* Bordas arredondadas */
-  background-color: #f9f9f9; /* Cor de fundo do formulário */
+  gap: 16px; 
+  max-width: 400px; 
+  margin: auto; 
+  padding: 20px; 
+  border: 1px solid #ccc; 
+  border-radius: 8px; 
+  background-color: #f9f9f9; 
 }
 
 input,
 select {
-    padding: 10px; /* Espaçamento interno dos campos */
-    border: 1px solid #ccc; /* Borda dos campos */
-    border-radius: 4px; /* Bordas arredondadas dos campos */
-    font-size: 16px; /* Tamanho da fonte */
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    font-size: 16px; 
 }
 
 input::placeholder {
-    color: #888; /* Cor do texto do placeholder */
+    color: #888; 
 }
 
 input:focus,
 select:focus {
-    border-color: #0070f3; /* Cor da borda ao focar no campo */
-    outline: none; /* Remove o contorno padrão do campo */
+    border-color: #0070f3; 
+    outline: none;
 }

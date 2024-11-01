@@ -4,16 +4,17 @@ import { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
 
 const Header: React.FC = () => {
-    const [dateTime, setDateTime] = useState<string>(() => {
-        const now = new Date();
-        return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-    });
+    const [dateTime, setDateTime] = useState<string>(''); 
 
     useEffect(() => {
-        const timer = setInterval(() => {
+       
+        const updateDateTime = () => {
             const now = new Date();
             setDateTime(`${now.toLocaleDateString()} ${now.toLocaleTimeString()}`);
-        }, 1000);
+        };
+
+        updateDateTime(); 
+        const timer = setInterval(updateDateTime, 1000); 
 
         return () => clearInterval(timer);
     }, []);

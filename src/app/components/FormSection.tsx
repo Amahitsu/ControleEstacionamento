@@ -1,21 +1,24 @@
-"use client"; 
+"use client";
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation'; // Importa useRouter para navegação
 import styles from '../styles/Home.module.css';
+import { apiUrls } from '../config/config';
 
 const FormSection: React.FC = () => {
+    const router = useRouter(); // Instância do roteador para navegação
     const [placa, setPlaca] = useState('');
     const [tipoVeiculo, setTipoVeiculo] = useState('');
     const [modelo, setModelo] = useState('');
     const [descricao, setDescricao] = useState('');
     const [color, setColor] = useState('');
     const [modelos, setModelos] = useState<{ nomeModelo: string }[]>([]);
-    const [tiposVeiculo, setTiposVeiculo] = useState<{ nomeTipo: string }[]>([]);
+    const [tiposVeiculo, setTiposVeiculo] = useState<{ veiculo: string }[]>([]);
 
     useEffect(() => {
         const fetchModelos = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/modelo');
+                const response = await fetch(apiUrls.modelos);
                 if (!response.ok) throw new Error('Erro ao buscar modelos');
                 
                 const data = await response.json();
@@ -35,7 +38,7 @@ const FormSection: React.FC = () => {
 
         const fetchTiposVeiculo = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/tipoVeiculo'); 
+                const response = await fetch(apiUrls.tipoVeiculo); 
                 if (!response.ok) throw new Error('Erro ao buscar tipos de veículos');
                 
                 const data = await response.json();
@@ -88,6 +91,10 @@ const FormSection: React.FC = () => {
         }
     };
 
+    const handleNavigateToTarifa = () => {
+        router.push('/tarifa'); 
+    };
+
     return (
         <div className={styles.formSection}>
             <input
@@ -103,8 +110,8 @@ const FormSection: React.FC = () => {
                 <option value="" disabled>Selecione o Tipo de Veículo</option>
                 {tiposVeiculo.length > 0 ? (
                     tiposVeiculo.map((tipo, index) => (
-                        <option key={index} value={tipo.nomeTipo}>
-                            {tipo.nomeTipo}
+                        <option key={index} value={tipo.veiculo}>
+                            {tipo.veiculo}
                         </option>
                     ))
                 ) : (
@@ -140,6 +147,9 @@ const FormSection: React.FC = () => {
             />
             <button className={styles.confirmButton} onClick={handleAddCar}>
                 Confirmar
+            </button>
+            <button className={styles.navigateButton} onClick={handleNavigateToTarifa}>
+                Cadastrar Tarifa
             </button>
         </div>
     );
