@@ -2,7 +2,7 @@
 import { Metadata } from 'next';
 import Header from '../app/components/Header'; 
 import FormSection from '../app/components/FormSection'; 
-import TableSection from '../app/components/TableSection';
+import TableSection from './components/TablePlaca';
 import styles from '../app/styles/Home.module.css'; 
 
 

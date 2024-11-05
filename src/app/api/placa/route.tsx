@@ -14,15 +14,29 @@ export async function GET(): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
-        const { placa, modeloId, tipoVeiculoId, cor } = await request.json();
+        const { placa, modeloId: modeloNome, tipoVeiculoId: tipoVeiculoNome, cor } = await request.json();
 
-        // Verifique se os dados foram recebidos corretamente
-        console.log('Dados recebidos para adicionar placa:', { placa, modeloId, tipoVeiculoId, cor });
+        console.log('Dados recebidos para adicionar placa:', { placa, modeloNome, tipoVeiculoNome, cor });
 
+        // Consultar o ID do modelo pelo nome
+        const modeloResult = await sql`SELECT id FROM modelo WHERE "nomeModelo" = ${modeloNome}`;
+        if (modeloResult.rowCount === 0) {
+            return NextResponse.json({ message: 'Modelo não encontrado.' }, { status: 404 });
+        }
+        const modeloId = modeloResult.rows[0].id;
+
+        // Consultar o ID do tipo de veículo pelo nome
+        const tipoVeiculoResult = await sql`SELECT id FROM "tipoVeiculo" WHERE "veiculo" = ${tipoVeiculoNome}`;
+        if (tipoVeiculoResult.rowCount === 0) {
+            return NextResponse.json({ message: 'Tipo de veículo não encontrado.' }, { status: 404 });
+        }
+        const tipoVeiculoId = tipoVeiculoResult.rows[0].id;
+
+        // Inserir na tabela `placa` com os IDs corretos
         const { rows, rowCount } = await sql`
-            INSERT INTO "placa" (placa, modeloId, tipoVeiculoId, cor)
+            INSERT INTO placa ("placa", "modeloId", "tipoVeiculoId", "cor")
             VALUES (${placa}, ${modeloId}, ${tipoVeiculoId}, ${cor})
-            RETURNING *;
+            RETURNING *
         `;
 
         if (rowCount === 0) {
