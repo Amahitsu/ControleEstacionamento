@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "clean": "rimraf --no-glob .next"
+    "clean": "rimraf --no-glob .next",
+    "cypress": "start-server-and-test dev http://localhost:3000 'cypress open'"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.5",
@@ -20,9 +21,11 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cypress": "^13.15.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
     "postcss": "^8",
+    "start-server-and-test": "^2.0.8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }

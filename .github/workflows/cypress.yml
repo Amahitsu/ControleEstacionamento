@@ -1,0 +1,65 @@
+name: Run Cypress Tests
+
+on:
+  push:
+    branches:
+      - main  # Ou o nome da branch que você deseja que dispare a execução do workflow
+  pull_request:
+    branches:
+      - main  # Ou o nome da branch que você deseja que dispare a execução do workflow
+
+jobs:
+  cypress:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: verceldb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      # Check out the code
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16' # Ou a versão do Node.js que você está usando no projeto
+
+      # Instalar dependências
+      - name: Install dependencies
+        run: |
+          npm install
+
+      # Start Next.js server
+      - name: Start Next.js
+        run: npm run dev & # Inicia o Next.js em segundo plano
+        env:
+          NEXT_PUBLIC_API_URL: 'http://localhost:3000'  
+        continue-on-error: true
+
+      # Espera o servidor Next.js iniciar
+      - name: Wait for Next.js server
+        run: npx wait-on http://localhost:3000
+
+      # Instalar dependências do Cypress
+      - name: Install Cypress dependencies
+        run: npm install cypress
+
+      # Executar os testes do Cypress
+      - name: Run Cypress tests
+        run: npx cypress run
+
+      # Opcional: Enviar os resultados para algum serviço de relatório ou visualização
