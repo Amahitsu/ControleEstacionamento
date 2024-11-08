@@ -3,10 +3,12 @@ name: Run Cypress Tests
 on:
   push:
     branches:
-      - main  
+      - main  # Ou o nome da branch que você deseja que dispare a execução do workflow
   pull_request:
     branches:
-      - main  
+      - main  # Ou o nome da branch que você deseja que dispare a execução do workflow
+
+jobs:
   cypress:
     runs-on: ubuntu-latest
 
@@ -34,7 +36,7 @@ on:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16' 
+          node-version: '16' # Ou a versão do Node.js que você está usando no projeto
 
       # Instalar dependências
       - name: Install dependencies
