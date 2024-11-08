@@ -1,9 +1,9 @@
 import React from 'react';
-import CadastrarPlaca from '../components/CadastrarPlaca';
-import styles from '../styles/Home.module.css';
-import TablePlaca from '../components/TablePlaca';
+import CadastrarPlaca from '../../components/CadastrarPlaca';
+import TablePlaca from '../../components/TabelaPlaca';
+import styles from '../../styles/Home.module.css';
 
-const PlacaCadastrada: React.FC = () => {
+const PlacaCadastro: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.mainContent}>Placa - Cadastrar Placa</h1>
@@ -15,4 +15,4 @@ const PlacaCadastrada: React.FC = () => {
   );
 };
 
-export default PlacaCadastrada;
+export default PlacaCadastro;

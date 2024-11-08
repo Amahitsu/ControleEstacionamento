@@ -10,6 +10,7 @@ export const apiUrls = {
   modelos: `${baseApiUrl}/modelo`,
   tipoVeiculo: `${baseApiUrl}/tipoVeiculo`,
   placas: `${baseApiUrl}/placa`,
+  tarifas: `${baseApiUrl}/tarifas`
 
   // Adicione outros endpoints conforme necessário
 };
