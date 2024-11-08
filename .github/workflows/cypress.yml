@@ -3,12 +3,10 @@ name: Run Cypress Tests
 on:
   push:
     branches:
-      - main  # Ou o nome da branch que você deseja que dispare a execução do workflow
+      - main  
   pull_request:
     branches:
-      - main  # Ou o nome da branch que você deseja que dispare a execução do workflow
-
-jobs:
+      - main  
   cypress:
     runs-on: ubuntu-latest
 
