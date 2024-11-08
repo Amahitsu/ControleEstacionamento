@@ -7,8 +7,10 @@ const PlacaCadastrada: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.mainContent}>Placa - Cadastrar Placa</h1>
-      <CadastrarPlaca />
-      <TablePlaca/>
+      <main className={styles.mainContent}>
+        <CadastrarPlaca />
+        <TablePlaca />
+      </main>
     </div>
   );
 };
