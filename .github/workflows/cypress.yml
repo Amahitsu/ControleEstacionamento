@@ -34,7 +34,7 @@ on:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16' # Ou a versão do Node.js que você está usando no projeto
+          node-version: '16' 
 
       # Instalar dependências
       - name: Install dependencies
@@ -75,4 +75,4 @@ on:
       - name: Run Cypress tests
         run: npx cypress run --config baseUrl=$PUBLIC_URL
 
-      # Opcional: Enviar os resultados para algum serviço de relatório ou visualização
+      
