@@ -12,8 +12,8 @@ const FormSection: React.FC = () => {
 
     // Função para formatar o valor como moeda real
     const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
-
+        const value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+    
         // Formata para duas casas decimais
         const formattedValue = (Number(value) / 100).toLocaleString('pt-BR', {
             minimumFractionDigits: 2,
@@ -21,7 +21,7 @@ const FormSection: React.FC = () => {
         });
         setValor(formattedValue);
     }
-
+    
     //função para puxar os tipos de Veiculos cadastrados.
     useEffect(() => {
         const fetchTiposVeiculo = async () => {
