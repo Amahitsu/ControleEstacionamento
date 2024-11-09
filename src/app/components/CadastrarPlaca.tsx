@@ -94,6 +94,7 @@ const FormSection: React.FC = () => {
             setTipoVeiculo('');
             setModelo('');
             setColor('');
+            window.location.reload();
         } catch (error) {
             console.error(error);
             alert('Não foi possível adicionar o carro');
@@ -108,6 +109,7 @@ const FormSection: React.FC = () => {
                 placeholder="Placa"
                 value={placa}
                 onChange={(e) => setPlaca(e.target.value)}
+                maxLength={7} // Limita a 7 caracteres
             />
             <select
                 value={tipoVeiculo}

@@ -1,7 +1,7 @@
 import React from 'react';
 import CadastrarTarifa from '../../components/CadastrarTarifa';
-import TablePlaca from '../../components/TabelaPlaca';
 import styles from '../../styles/Home.module.css';
+import TableTarifas from '@/app/components/TabelaTarifas';
 
 const TarifaCadastro: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const TarifaCadastro: React.FC = () => {
       <h1 className={styles.mainContent}>Placa - Cadastrar Placa</h1>
       <main className={styles.mainContent}>
         <CadastrarTarifa />
-        <TablePlaca />
+        <TableTarifas />
       </main>
     </div>
   );
