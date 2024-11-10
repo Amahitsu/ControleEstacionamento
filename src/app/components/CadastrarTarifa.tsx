@@ -90,6 +90,7 @@ const FormSection: React.FC = () => {
                 maxLength={5} // Limita a 5 caracteres
             />
             <select
+                 className="w-full mb-2.5"
                 value={tipoVeiculo}
                 onChange={(e) => setTipoVeiculo(e.target.value)}
             >
