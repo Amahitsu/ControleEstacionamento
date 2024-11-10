@@ -1,8 +1,8 @@
 "use client"; 
 
 import { useEffect, useState } from 'react';
-import styles from '../styles/Home.module.css';
 import { apiUrls } from '../config/config';
+import styles from '../styles/Home.module.css';
 
 const FormSection: React.FC = () => {
     const [placa, setPlaca] = useState('');
@@ -112,6 +112,7 @@ const FormSection: React.FC = () => {
                 maxLength={7} // Limita a 7 caracteres
             />
             <select
+                className="w-full mb-2.5"
                 value={tipoVeiculo}
                 onChange={(e) => setTipoVeiculo(e.target.value)}
             >
@@ -127,6 +128,7 @@ const FormSection: React.FC = () => {
                 )}
             </select>
             <select
+                className="w-full mb-2.5"
                 value={modelo}
                 onChange={(e) => setModelo(e.target.value)}
             >

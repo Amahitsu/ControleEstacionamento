@@ -15,6 +15,7 @@ const Home: React.FC = () => {
     return (
         <div className={styles.container}>
             <Header />
+            <h1 className="px-5 pt-5 pb-0">Veículos Estacionados</h1>
             <main className={styles.mainContent}>
                 <FormSection />
                 <TableSection />

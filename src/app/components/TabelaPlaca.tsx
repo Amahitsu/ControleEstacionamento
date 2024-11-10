@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import styles from '../styles/Home.module.css';
 import { apiUrls } from '../config/config';
+import styles from '../styles/Home.module.css';
 
 interface Placa {
     id: number;
@@ -97,7 +97,7 @@ const TablePlaca: React.FC = () => {
         <div className={styles.tableSection}>
             <table>
                 <thead>
-                    <tr>
+                    <tr className={styles.tableHeader}>
                         <th>Placa</th>
                         <th>Tipo</th>
                         <th>Modelo</th>
@@ -115,11 +115,13 @@ const TablePlaca: React.FC = () => {
                     ))}
                 </tbody>
             </table>
-            <div className={styles.pagination}>
-                <button onClick={paginaAnterior} disabled={pagina === 1}>Anterior</button>
-                <span>Página {pagina}</span>
-                <button onClick={proximaPagina}>Próxima</button>
-            </div>
+            {/*
+            <ul className={styles.pagination}>
+                <li><button className="mr-6" onClick={paginaAnterior} disabled={pagina === 1}>Anterior</button></li>
+                <li><span className="mr-6">Página {pagina}</span></li>
+                <li><button className="mr-6 underline decoration-1" onClick={proximaPagina}>Próxima</button></li>
+            </ul>
+            */}
         </div>
     );
 };

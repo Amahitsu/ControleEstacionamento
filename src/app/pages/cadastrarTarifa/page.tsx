@@ -1,12 +1,14 @@
+import TableTarifas from '@/app/components/TabelaTarifas';
 import React from 'react';
 import CadastrarTarifa from '../../components/CadastrarTarifa';
+import Header from '../../components/Header';
 import styles from '../../styles/Home.module.css';
-import TableTarifas from '@/app/components/TabelaTarifas';
 
 const TarifaCadastro: React.FC = () => {
   return (
     <div className={styles.container}>
-      <h1 className={styles.mainContent}>Placa - Cadastrar Placa</h1>
+      <Header />
+      <h1 className="px-5 pt-5 pb-0">Cadastrar Tarifa</h1>
       <main className={styles.mainContent}>
         <CadastrarTarifa />
         <TableTarifas />
