@@ -102,6 +102,7 @@ const FormSection: React.FC = () => {
                 value={placa}
                 onChange={(e) => setPlaca(e.target.value)}
             />
+            {/*
             <select
                 className="w-full mb-2.5"
                 value={modeloId}
@@ -139,7 +140,7 @@ const FormSection: React.FC = () => {
                 placeholder="Cor"
                 value={cor}
                 onChange={(e) => setCor(e.target.value)}
-            />
+            />*/}
             <button className={styles.confirmButton} onClick={handleAddPlaca}>
                 Confirmar
             </button>
