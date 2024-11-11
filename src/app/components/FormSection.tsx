@@ -10,10 +10,10 @@ const FormSection: React.FC = () => {
     const [modeloId, setModeloId] = useState<number | ''>(''); 
     const [tipoVeiculoId, setTipoVeiculoId] = useState<number | ''>(''); 
     const [cor, setCor] = useState(''); 
-    const [modelos, setModelos] = useState<{ id: number; nomeModelo: string }[]>([]);
-    const [tiposVeiculo, setTiposVeiculo] = useState<{ id: number; veiculo: string }[]>([]);
+ //   const [modelos, setModelos] = useState<{ id: number; nomeModelo: string }[]>([]);
+ //   const [tiposVeiculo, setTiposVeiculo] = useState<{ id: number; veiculo: string }[]>([]);
 
-    useEffect(() => {
+   {/* useEffect(() => {
         const fetchModelos = async () => {
             try {
                 const response = await fetch(apiUrls.modelos);
@@ -56,8 +56,7 @@ const FormSection: React.FC = () => {
 
         fetchModelos();
         fetchTiposVeiculo();
-    }, []);
-
+    }, []); */}
     const handleAddPlaca = async () => {
         if (!placa || !modeloId || !tipoVeiculoId || !cor) {
             alert("Por favor, preencha todos os campos.");

@@ -49,8 +49,8 @@ const TableTarifas: React.FC = () => {
         fetchTiposVeiculo();
     }, [pagina]);
 
-    const proximaPagina = () => setPagina((prev) => prev + 1);
-    const paginaAnterior = () => setPagina((prev) => (prev > 1 ? prev - 1 : 1));
+  //  const proximaPagina = () => setPagina((prev) => prev + 1);
+  //  const paginaAnterior = () => setPagina((prev) => (prev > 1 ? prev - 1 : 1));
 
     const obterNomeTipoVeiculo = (id: number) => {
         const tipo = tiposVeiculo.find((tipo) => tipo.id === id);
