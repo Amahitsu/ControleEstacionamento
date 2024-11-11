@@ -32,9 +32,8 @@ const TablePlaca: React.FC = () => {
     useEffect(() => {
         const fetchPlacas = async () => {
             try {
-                const response = await fetch(`/api/placa?page=${pagina}&limit=${itensPorPagina}`);
+                const response = await fetch(`/api/placa`);
                 const data = await response.json();
-                console.log("Placas:", data);
                 setPlacas(data.data);
             } catch (error) {
                 console.error("Erro ao buscar placas:", error);
@@ -45,7 +44,6 @@ const TablePlaca: React.FC = () => {
             try {
                 const response = await fetch(apiUrls.tipoVeiculo);
                 const data = await response.json();
-                console.log("Tipos de Veículo:", data);
                 setTiposVeiculo(data.data);
             } catch (error) {
                 console.error("Erro ao buscar tipos de veículo:", error);
@@ -56,7 +54,6 @@ const TablePlaca: React.FC = () => {
             try {
                 const response = await fetch(apiUrls.modelos);
                 const data = await response.json();
-                console.log("Modelos:", data);
                 setModelos(data.data);
             } catch (error) {
                 console.error("Erro ao buscar modelos:", error);
@@ -68,29 +65,30 @@ const TablePlaca: React.FC = () => {
         fetchModelos();
     }, [pagina]);
 
-    const proximaPagina = () => setPagina((prev) => prev + 1);
-    const paginaAnterior = () => setPagina((prev) => (prev > 1 ? prev - 1 : 1));
-
-    // Função para obter o nome do tipo de veículo pelo ID
     const obterNomeTipoVeiculo = (id: number) => {
-        // Verifica se 'tiposVeiculo' é um array e não está vazio
-        if (Array.isArray(tiposVeiculo) && tiposVeiculo.length > 0) {
-            const tipo = tiposVeiculo.find((tipo) => tipo.id === id);  // Comparação numérica
-            return tipo ? tipo.veiculo : 'Desconhecido';
-        }
-        console.error("tiposVeiculo não é um array válido ou está vazio.");
-        return 'Desconhecido';
+        const tipo = tiposVeiculo.find((tipo) => tipo.id === id);  
+        return tipo ? tipo.veiculo : 'Desconhecido';
     };
 
-    // Função para obter o nome do modelo pelo ID
     const obterNomeModelo = (id: number) => {
-        // Verifica se 'modelos' é um array e não está vazio
-        if (Array.isArray(modelos) && modelos.length > 0) {
-            const modelo = modelos.find((modelo) => modelo.id === id);  // Comparação numérica
-            return modelo ? modelo.nomeModelo : 'Desconhecido';
+        const modelo = modelos.find((modelo) => modelo.id === id);  
+        return modelo ? modelo.nomeModelo : 'Desconhecido';
+    };
+
+    const excluirPlaca = async (id: number) => {
+        try {
+            const response = await fetch(`/api/placa?id=${id}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                setPlacas((prevPlacas) => prevPlacas.filter((placa) => placa.id !== id));
+                console.log("Placa excluída com sucesso.");
+            } else {
+                console.error("Erro ao excluir placa:", await response.json());
+            }
+        } catch (error) {
+            console.error("Erro ao fazer requisição de exclusão:", error);
         }
-        console.error("modelos não é um array válido ou está vazio.");
-        return 'Desconhecido';
     };
 
     return (
@@ -102,6 +100,7 @@ const TablePlaca: React.FC = () => {
                         <th>Tipo</th>
                         <th>Modelo</th>
                         <th>Cor</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -111,11 +110,15 @@ const TablePlaca: React.FC = () => {
                             <td>{obterNomeTipoVeiculo(placa.tipoVeiculoId)}</td>
                             <td>{obterNomeModelo(placa.modeloId)}</td>
                             <td>{placa.cor}</td>
+                            <td>
+                                <button onClick={() => console.log('Estacionar', placa.id)}>Estacionar</button>
+                                <button onClick={() => excluirPlaca(placa.id)}>Excluir</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            {/*
+            {/* 
             <ul className={styles.pagination}>
                 <li><button className="mr-6" onClick={paginaAnterior} disabled={pagina === 1}>Anterior</button></li>
                 <li><span className="mr-6">Página {pagina}</span></li>
