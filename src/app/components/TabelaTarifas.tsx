@@ -27,7 +27,15 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
             try {
                 const response = await fetch(`/api/tarifas?page=${pagina}&limit=${itensPorPagina}`);
                 const data = await response.json();
-                setTarifas(data.data);
+
+                // Convertendo id e tipoVeiculoId para números
+                const tarifasConvertidas = data.data.map((tarifa: any) => ({
+                    ...tarifa,
+                    id: Number(tarifa.id),
+                    tipoVeiculoId: Number(tarifa.tipoVeiculoId),
+                }));
+
+                setTarifas(tarifasConvertidas);
             } catch (error) {
                 console.error("Erro ao buscar tarifas:", error);
             }
@@ -37,7 +45,14 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
             try {
                 const response = await fetch(apiUrls.tipoVeiculo);
                 const data = await response.json();
-                setTiposVeiculo(data.data);
+
+                // Convertendo id para número
+                const tiposVeiculoConvertidos = data.data.map((tipo: any) => ({
+                    ...tipo,
+                    id: Number(tipo.id),
+                }));
+
+                setTiposVeiculo(tiposVeiculoConvertidos);
             } catch (error) {
                 console.error("Erro ao buscar tipos de veículo:", error);
             }
@@ -49,20 +64,21 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
 
     const handleDeleteTarifa = async (id: number) => {
         try {
-            const response = await fetch(`/api/tarifas/${id}`, {
+            const response = await fetch(`/api/tarifas?id=${id}`, {
                 method: 'DELETE',
             });
 
             if (response.ok) {
                 alert('Tarifa deletada com sucesso!');
                 // Atualize a lista de tarifas após a exclusão
+                setTarifas((prevTarifas) => prevTarifas.filter((tarifa) => tarifa.id !== id));
             } else if (response.status === 404) {
                 alert('Tarifa não encontrada');
             } else {
                 alert('Erro ao deletar a tarifa');
             }
         } catch (error) {
-            console.error(error);
+            console.error("Erro ao tentar deletar a tarifa:", error);
             alert('Erro ao tentar deletar a tarifa');
         }
     };
@@ -97,6 +113,13 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
                     ))}
                 </tbody>
             </table>
+            {/* 
+            <ul className={styles.pagination}>
+                <li><button className="mr-6" onClick={paginaAnterior} disabled={pagina === 1}>Anterior</button></li>
+                <li><span className="mr-6">Página {pagina}</span></li>
+                <li><button className="mr-6 underline decoration-1" onClick={proximaPagina}>Próxima</button></li>
+            </ul>
+            */}
         </div>
     );
 };

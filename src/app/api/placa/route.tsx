@@ -50,3 +50,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         return NextResponse.json({ message: 'Erro ao adicionar a placa', error: error }, { status: 500 });
     }
 }
+
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get("id");
+
+        if (!id) {
+            return NextResponse.json({ message: 'ID não fornecido.' }, { status: 400 });
+        }
+
+        const { rowCount } = await sql`
+            DELETE FROM placa WHERE id = ${id}
+        `;
+
+        if (rowCount === 0) {
+            return NextResponse.json({ message: 'Placa não encontrada.' }, { status: 404 });
+        }
+
+        return NextResponse.json({ message: 'Placa excluída com sucesso.' }, { status: 200 });
+    } catch (error) {
+        console.error('Erro ao excluir placa:', error);
+        return NextResponse.json({ message: 'Erro ao excluir a placa', error: error }, { status: 500 });
+    }
+}
