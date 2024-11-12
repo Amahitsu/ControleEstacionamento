@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(): Promise<NextResponse> {
   try {
@@ -71,22 +71,27 @@ export async function PUT(request: Request): Promise<NextResponse> {
   }
 }
 
-export async function DELETE(request: Request): Promise<NextResponse> {
+
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
   try {
-    const { id } = await request.json();
+      const { searchParams } = new URL(request.url);
+      const id = searchParams.get("id");
 
-    const result = await sql`
-      DELETE FROM tarifas
-      WHERE id = ${id}
-    `;
+      if (!id) {
+          return NextResponse.json({ message: 'ID não fornecido.' }, { status: 400 });
+      }
 
-    if (result?.rowCount && result.rowCount > 0) {
-      return NextResponse.json({ message: 'Tarifa deletada com sucesso!' }, { status: 200 });
-    } else {
-      return NextResponse.json({ message: 'Tarifa não encontrada' }, { status: 404 });
-    }
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-    return NextResponse.json({ message: 'Erro ao deletar a tarifa', error: errorMessage }, { status: 500 });
+      const { rowCount } = await sql`
+          DELETE FROM tarifas WHERE id = ${id}
+      `;
+
+      if (rowCount === 0) {
+          return NextResponse.json({ message: 'Tarifa não encontrada.' }, { status: 404 });
+      }
+
+      return NextResponse.json({ message: 'Tarifa excluída com sucesso.' }, { status: 200 });
+  } catch (error) {
+      console.error('Erro ao excluir tarifa:', error);
+      return NextResponse.json({ message: 'Erro ao excluir a tarifa', error: error }, { status: 500 });
   }
 }
