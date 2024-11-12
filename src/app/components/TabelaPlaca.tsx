@@ -1,8 +1,6 @@
-// src/app/components/TablePlaca.tsx
 "use client";
 
 import React, { useEffect, useState } from 'react';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { apiUrls } from '../config/config';
 import styles from '../styles/Home.module.css';
 
@@ -28,8 +26,8 @@ const TablePlaca: React.FC = () => {
     const [placas, setPlacas] = useState<Placa[]>([]);
     const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
     const [modelos, setModelos] = useState<Modelo[]>([]);
-    const [pagina, setPagina] = useState(1);
-    const itensPorPagina = 10;
+    const [pagina] = useState(1);
+   // const itensPorPagina = 10;
 
     useEffect(() => {
         const fetchPlacas = async () => {

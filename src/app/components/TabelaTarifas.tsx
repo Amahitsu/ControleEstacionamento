@@ -1,8 +1,6 @@
-// src/app/components/TableTarifas.tsx
 "use client";
 
 import React, { useEffect, useState } from 'react';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { apiUrls } from '../config/config';
 import styles from '../styles/Home.module.css';
 
@@ -21,7 +19,7 @@ interface TipoVeiculo {
 const TableTarifas: React.FC = () => {
     const [tarifas, setTarifas] = useState<Tarifa[]>([]);
     const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
-    const [pagina, setPagina] = useState(1);
+    const [pagina] = useState(1);
     const itensPorPagina = 10;
 
     useEffect(() => {
@@ -51,10 +49,8 @@ const TableTarifas: React.FC = () => {
         fetchTiposVeiculo();
     }, [pagina]);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const proximaPagina = () => setPagina((prev) => prev + 1);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // const paginaAnterior = () => setPagina((prev) => (prev > 1 ? prev - 1 : 1));
+  //  const proximaPagina = () => setPagina((prev) => prev + 1);
+  //  const paginaAnterior = () => setPagina((prev) => (prev > 1 ? prev - 1 : 1));
 
     const obterNomeTipoVeiculo = (id: number) => {
         const tipo = tiposVeiculo.find((tipo) => tipo.id === id);
@@ -81,7 +77,7 @@ const TableTarifas: React.FC = () => {
                     ))}
                 </tbody>
             </table>
-            {/* 
+            {/*
             <ul className={styles.pagination}>
                 <li><button className="mr-6" onClick={paginaAnterior} disabled={pagina === 1}>Anterior</button></li>
                 <li><span className="mr-6">Página {pagina}</span></li>
