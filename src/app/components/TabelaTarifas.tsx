@@ -16,7 +16,7 @@ interface TipoVeiculo {
     veiculo: string;
 }
 
-const TableTarifas: React.FC = () => {
+const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit }) => {
     const [tarifas, setTarifas] = useState<Tarifa[]>([]);
     const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
     const [pagina, setPagina] = useState(1);
@@ -27,7 +27,6 @@ const TableTarifas: React.FC = () => {
             try {
                 const response = await fetch(`/api/tarifas?page=${pagina}&limit=${itensPorPagina}`);
                 const data = await response.json();
-                console.log("Tarifas:", data);
                 setTarifas(data.data);
             } catch (error) {
                 console.error("Erro ao buscar tarifas:", error);
@@ -38,7 +37,6 @@ const TableTarifas: React.FC = () => {
             try {
                 const response = await fetch(apiUrls.tipoVeiculo);
                 const data = await response.json();
-                console.log("Tipos de Veículo:", data);
                 setTiposVeiculo(data.data);
             } catch (error) {
                 console.error("Erro ao buscar tipos de veículo:", error);
@@ -49,8 +47,25 @@ const TableTarifas: React.FC = () => {
         fetchTiposVeiculo();
     }, [pagina]);
 
-    const proximaPagina = () => setPagina((prev) => prev + 1);
-    const paginaAnterior = () => setPagina((prev) => (prev > 1 ? prev - 1 : 1));
+    const handleDeleteTarifa = async (id: number) => {
+        try {
+            const response = await fetch(`/api/tarifas/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                alert('Tarifa deletada com sucesso!');
+                // Atualize a lista de tarifas após a exclusão
+            } else if (response.status === 404) {
+                alert('Tarifa não encontrada');
+            } else {
+                alert('Erro ao deletar a tarifa');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Erro ao tentar deletar a tarifa');
+        }
+    };
 
     const obterNomeTipoVeiculo = (id: number) => {
         const tipo = tiposVeiculo.find((tipo) => tipo.id === id);
@@ -65,6 +80,7 @@ const TableTarifas: React.FC = () => {
                         <th>Hora Cobrada</th>
                         <th>Tipo de Veículo</th>
                         <th>Valor</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,19 +89,16 @@ const TableTarifas: React.FC = () => {
                             <td>{tarifa.horaCobrada}</td>
                             <td>{obterNomeTipoVeiculo(tarifa.tipoVeiculoId)}</td>
                             <td>R$ {tarifa.valor}</td>
+                            <td>
+                                <button onClick={() => onEdit(tarifa)}>Editar</button>
+                                <button onClick={() => handleDeleteTarifa(tarifa.id)}>Excluir</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            {/*
-            <ul className={styles.pagination}>
-                <li><button className="mr-6" onClick={paginaAnterior} disabled={pagina === 1}>Anterior</button></li>
-                <li><span className="mr-6">Página {pagina}</span></li>
-                <li><button className="mr-6 underline decoration-1" onClick={proximaPagina}>Próxima</button></li>
-            </ul>
-            */}
         </div>
     );
 };
 
-export default TableTarifas;
+export default TabelaTarifas;
