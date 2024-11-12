@@ -1,9 +1,9 @@
 // src/app/page.tsx
 import { Metadata } from 'next';
-import Header from '../app/components/Header'; 
-import FormSection from '../app/components/FormSection'; 
-import TableSection from '../app/components/TableSection';
-import styles from '../app/styles/Home.module.css'; 
+import FormSection from '../app/components/FormSection';
+import Header from '../app/components/Header';
+import styles from '../app/styles/Home.module.css';
+import TableSection from './components/TabelaPlaca';
 
 
 export const metadata: Metadata = {
@@ -15,6 +15,7 @@ const Home: React.FC = () => {
     return (
         <div className={styles.container}>
             <Header />
+            <h1 className="px-5 pt-5 pb-0">Veículos Estacionados</h1>
             <main className={styles.mainContent}>
                 <FormSection />
                 <TableSection />
