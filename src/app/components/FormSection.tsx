@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { apiUrls } from '../config/config';
 import styles from '../styles/Home.module.css';
 
@@ -10,10 +11,11 @@ const FormSection: React.FC = () => {
     const [modeloId, setModeloId] = useState<number | ''>(''); 
     const [tipoVeiculoId, setTipoVeiculoId] = useState<number | ''>(''); 
     const [cor, setCor] = useState(''); 
- //   const [modelos, setModelos] = useState<{ id: number; nomeModelo: string }[]>([]);
- //   const [tiposVeiculo, setTiposVeiculo] = useState<{ id: number; veiculo: string }[]>([]);
+    // const [modelos, setModelos] = useState<{ id: number; nomeModelo: string }[]>([]);
+    // const [tiposVeiculo, setTiposVeiculo] = useState<{ id: number; veiculo: string }[]>([]);
 
-   {/* useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    /* useEffect(() => {
         const fetchModelos = async () => {
             try {
                 const response = await fetch(apiUrls.modelos);
@@ -56,7 +58,8 @@ const FormSection: React.FC = () => {
 
         fetchModelos();
         fetchTiposVeiculo();
-    }, []); */}
+    }, []); */
+    
     const handleAddPlaca = async () => {
         if (!placa || !modeloId || !tipoVeiculoId || !cor) {
             alert("Por favor, preencha todos os campos.");
@@ -101,7 +104,7 @@ const FormSection: React.FC = () => {
                 value={placa}
                 onChange={(e) => setPlaca(e.target.value)}
             />
-            {/*
+            {/* 
             <select
                 className="w-full mb-2.5"
                 value={modeloId}
@@ -139,7 +142,7 @@ const FormSection: React.FC = () => {
                 placeholder="Cor"
                 value={cor}
                 onChange={(e) => setCor(e.target.value)}
-            />*/}
+            /> */}
             <button className={styles.confirmButton} onClick={handleAddPlaca}>
                 Confirmar
             </button>

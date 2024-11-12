@@ -1,6 +1,8 @@
+// src/app/components/TablePlaca.tsx
 "use client";
 
 import React, { useEffect, useState } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { apiUrls } from '../config/config';
 import styles from '../styles/Home.module.css';
 
