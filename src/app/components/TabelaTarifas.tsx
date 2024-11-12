@@ -20,13 +20,12 @@ interface ApiResponse<T> {
     data: T[];
 }
 
-const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit }) => {
+const TabelaTarifas: React.FC= () => {
     const [tarifas, setTarifas] = useState<Tarifa[]>([]);
     const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
     const [pagina] = useState(1);
     const itensPorPagina = 10;
 
-    //
     useEffect(() => {
         const fetchTarifas = async () => {
             try {
@@ -69,7 +68,7 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
 
     const handleDeleteTarifa = async (id: number) => {
         try {
-            const response = await fetch(`/api/tarifas/${id}`, {
+            const response = await fetch(`/api/tarifas?${id}`, {
                 method: 'DELETE',
             });
 
@@ -110,7 +109,7 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
                             <td>{obterNomeTipoVeiculo(tarifa.tipoVeiculoId)}</td>
                             <td>R$ {tarifa.valor}</td>
                             <td>
-                                <button onClick={() => onEdit(tarifa)}>Editar</button>
+                              {/*   <button onClick={() => onEdit(tarifa)}>Editar</button>*/}
                                 <button onClick={() => handleDeleteTarifa(tarifa.id)}>Excluir</button>
                             </td>
                         </tr>

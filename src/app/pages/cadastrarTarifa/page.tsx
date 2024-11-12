@@ -1,4 +1,4 @@
-import TableTarifas from '@/app/components/TabelaTarifas';
+import TabelaTarifas from '@/app/components/TabelaTarifas';
 import React from 'react';
 import CadastrarTarifa from '../../components/CadastrarTarifa';
 import Header from '../../components/Header';
@@ -11,7 +11,8 @@ const TarifaCadastro: React.FC = () => {
       <h1 className="px-5 pt-5 pb-0">Cadastrar Tarifa</h1>
       <main className={styles.mainContent}>
         <CadastrarTarifa />
-        <TableTarifas />
+        <TabelaTarifas />
+      
       </main>
     </div>
   );
