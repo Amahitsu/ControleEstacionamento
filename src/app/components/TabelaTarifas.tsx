@@ -23,9 +23,10 @@ interface ApiResponse<T> {
 const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit }) => {
     const [tarifas, setTarifas] = useState<Tarifa[]>([]);
     const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
-    const [pagina, setPagina] = useState(1);
+    const [pagina] = useState(1);
     const itensPorPagina = 10;
 
+    //
     useEffect(() => {
         const fetchTarifas = async () => {
             try {
