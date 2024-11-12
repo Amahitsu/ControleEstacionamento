@@ -68,7 +68,7 @@ const TabelaTarifas: React.FC= () => {
 
     const handleDeleteTarifa = async (id: number) => {
         try {
-            const response = await fetch(`/api/tarifas?${id}`, {
+            const response = await fetch(`/api/tarifas?id=${id}`, {
                 method: 'DELETE',
             });
 
