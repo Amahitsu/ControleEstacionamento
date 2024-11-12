@@ -19,7 +19,7 @@ interface TipoVeiculo {
 const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit }) => {
     const [tarifas, setTarifas] = useState<Tarifa[]>([]);
     const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
-    const [pagina, setPagina] = useState(1);
+    const [pagina] = useState(1);
     const itensPorPagina = 10;
 
     useEffect(() => {
@@ -82,6 +82,8 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
             alert('Erro ao tentar deletar a tarifa');
         }
     };
+  //  const proximaPagina = () => setPagina((prev) => prev + 1);
+  //  const paginaAnterior = () => setPagina((prev) => (prev > 1 ? prev - 1 : 1));
 
     const obterNomeTipoVeiculo = (id: number) => {
         const tipo = tiposVeiculo.find((tipo) => tipo.id === id);
@@ -113,7 +115,7 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
                     ))}
                 </tbody>
             </table>
-            {/* 
+            {/*
             <ul className={styles.pagination}>
                 <li><button className="mr-6" onClick={paginaAnterior} disabled={pagina === 1}>Anterior</button></li>
                 <li><span className="mr-6">Página {pagina}</span></li>
