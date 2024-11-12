@@ -16,20 +16,24 @@ interface TipoVeiculo {
     veiculo: string;
 }
 
+interface ApiResponse<T> {
+    data: T[];
+}
+
 const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit }) => {
     const [tarifas, setTarifas] = useState<Tarifa[]>([]);
     const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
-    const [pagina] = useState(1);
+    const [pagina, setPagina] = useState(1);
     const itensPorPagina = 10;
 
     useEffect(() => {
         const fetchTarifas = async () => {
             try {
                 const response = await fetch(`/api/tarifas?page=${pagina}&limit=${itensPorPagina}`);
-                const data = await response.json();
+                const data: ApiResponse<Tarifa> = await response.json();
 
                 // Convertendo id e tipoVeiculoId para números
-                const tarifasConvertidas = data.data.map((tarifa: any) => ({
+                const tarifasConvertidas = data.data.map((tarifa) => ({
                     ...tarifa,
                     id: Number(tarifa.id),
                     tipoVeiculoId: Number(tarifa.tipoVeiculoId),
@@ -44,10 +48,10 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
         const fetchTiposVeiculo = async () => {
             try {
                 const response = await fetch(apiUrls.tipoVeiculo);
-                const data = await response.json();
+                const data: ApiResponse<TipoVeiculo> = await response.json();
 
                 // Convertendo id para número
-                const tiposVeiculoConvertidos = data.data.map((tipo: any) => ({
+                const tiposVeiculoConvertidos = data.data.map((tipo) => ({
                     ...tipo,
                     id: Number(tipo.id),
                 }));
@@ -64,13 +68,12 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
 
     const handleDeleteTarifa = async (id: number) => {
         try {
-            const response = await fetch(`/api/tarifas?id=${id}`, {
+            const response = await fetch(`/api/tarifas/${id}`, {
                 method: 'DELETE',
             });
 
             if (response.ok) {
                 alert('Tarifa deletada com sucesso!');
-                // Atualize a lista de tarifas após a exclusão
                 setTarifas((prevTarifas) => prevTarifas.filter((tarifa) => tarifa.id !== id));
             } else if (response.status === 404) {
                 alert('Tarifa não encontrada');
@@ -82,8 +85,6 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
             alert('Erro ao tentar deletar a tarifa');
         }
     };
-  //  const proximaPagina = () => setPagina((prev) => prev + 1);
-  //  const paginaAnterior = () => setPagina((prev) => (prev > 1 ? prev - 1 : 1));
 
     const obterNomeTipoVeiculo = (id: number) => {
         const tipo = tiposVeiculo.find((tipo) => tipo.id === id);
@@ -115,7 +116,7 @@ const TabelaTarifas: React.FC<{ onEdit: (tarifa: Tarifa) => void }> = ({ onEdit 
                     ))}
                 </tbody>
             </table>
-            {/*
+            {/* 
             <ul className={styles.pagination}>
                 <li><button className="mr-6" onClick={paginaAnterior} disabled={pagina === 1}>Anterior</button></li>
                 <li><span className="mr-6">Página {pagina}</span></li>
