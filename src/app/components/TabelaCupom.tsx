@@ -7,7 +7,7 @@ import styles from '../styles/Home.module.css';
 interface Cupom {
     id: number;
     dataHoraEntrada: string;
-    dataHoraSaida: string;
+    dataHoraSaida: string | null;
     placa: string;
     idTipoVeiculo: string;
     tipoVeiculo: string;
@@ -43,7 +43,6 @@ const TableCupom: React.FC = () => {
                 
                 setTarifas(data.data); // Armazena as tarifas no estado
             } catch (error) {
-                debugger
                 console.error("Erro ao buscar tarifas:", error);
             }
         };
@@ -92,6 +91,46 @@ const TableCupom: React.FC = () => {
         setCupomSelecionado(null);
     };
 
+    const liberarCupomNoBanco = async () => {
+        if (!cupomSelecionado) return;
+
+        try {
+            const valorTotal = calcularValorTotal(
+                cupomSelecionado.dataHoraEntrada,
+                new Date().toISOString(),
+                cupomSelecionado.idTipoVeiculo
+            );
+
+            const dataEntrada = new Date(cupomSelecionado.dataHoraEntrada);
+            const dataSaida = new Date();
+            const dataSaidaISO = dataSaida.toISOString();
+            const horaCobrada = calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.dataHoraSaida, cupomSelecionado.idTipoVeiculo)
+            debugger
+            const resposta = await fetch(`/api/cupom?id=${cupomSelecionado.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    valorTotal: horaCobrada,
+                    dataHoraSaida: dataSaidaISO,
+                }),
+            });
+
+            const data = await resposta.json();
+
+            if (resposta.ok) {
+                console.log('Data de saída e valor total atualizados:', data);
+                fecharModal();
+                //fetchCupons(); 
+            } else {
+                console.error('Erro ao atualizar dataHoraSaida e valor total:', data.message);
+            }
+        } catch (error) {
+            console.error('Erro ao liberar cupom:', error);
+        }
+    };
+
     return (
         <div className={styles.tableSection}>
             <table>
@@ -112,7 +151,7 @@ const TableCupom: React.FC = () => {
                             <td>{cupom.id}</td>
                             <td>{cupom.dataHoraEntrada}</td>
                             <td>
-                                {calcularValorTotal(
+                                R$ {calcularValorTotal(
                                     cupom.dataHoraEntrada,
                                     cupom.dataHoraSaida,
                                     cupom.idTipoVeiculo
@@ -142,7 +181,7 @@ const TableCupom: React.FC = () => {
 
                         <div className="grid grid-cols-2 gap-4 mb-4">
                             <p><strong>Placa:</strong> {cupomSelecionado.placa}</p>
-                            <p><strong>Valor Total:</strong> {calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.dataHoraSaida, cupomSelecionado.idTipoVeiculo).toFixed(2)}</p>
+                            <p><strong>Valor Total: R$ </strong> {calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.dataHoraSaida, cupomSelecionado.idTipoVeiculo).toFixed(2)}</p>
 
                             <p><strong>Hora Entrada:</strong> {cupomSelecionado.dataHoraEntrada}</p>
                             <p><strong>Hora Saída:</strong> {cupomSelecionado.dataHoraSaida ? new Date(cupomSelecionado.dataHoraSaida).toLocaleTimeString() : new Date().toLocaleTimeString()}</p>
@@ -157,11 +196,7 @@ const TableCupom: React.FC = () => {
                                 Fechar
                             </button>
                             <button
-                                onClick={() => {
-                                    // Lógica para liberar o cupom
-                                    console.log('Cupom liberado:', cupomSelecionado);
-                                    fecharModal();
-                                }}
+                                onClick={liberarCupomNoBanco} // Chama a função para atualizar
                                 className="px-4 py-2 bg-green-600 text-white rounded"
                             >
                                 Confirmar

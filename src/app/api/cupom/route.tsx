@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {
   try {
@@ -19,7 +19,9 @@ export async function GET(): Promise<NextResponse> {
       JOIN 
           "tipoVeiculo" tv ON tv.id = p."tipoVeiculoId"
       JOIN
-          "modelo" m ON m.id = p."modeloId";  -- Assumindo que o modelo está na tabela "modelo"
+          "modelo" m ON m.id = p."modeloId"
+      WHERE
+          c."dataHoraSaida" IS NULL;
     `;
     return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
@@ -41,19 +43,37 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 }
 
-export async function PUT(
-  id: number,
-  descricao: string,
-  placaId: number,
-): Promise<NextResponse> {
+export async function PUT(request: NextRequest): Promise<NextResponse> {
   try {
-    const { rows } = await sql`UPDATE "cupom"
-      SET descricao = ${descricao}, placaId= ${placaId},
-      WHERE id = ${id};`
-      return NextResponse.json({ data: rows }, { status: 200 });
-    } catch (error) {
-      return NextResponse.json({ data: error }, { status: 500 });
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ message: 'ID não fornecido.' }, { status: 400 });
     }
+
+    const { dataHoraSaida, valorTotal } = await request.json();
+
+    if (!dataHoraSaida || valorTotal === undefined) {
+      return NextResponse.json({ message: 'Campos obrigatórios faltando' }, { status: 400 });
+    }
+
+    const { rows } = await sql`
+      UPDATE "cupom"
+      SET "dataHoraSaida" = ${dataHoraSaida}, "valorTotal" = ${valorTotal}
+      WHERE id = ${id}
+      RETURNING *;
+    `;
+
+    if (rows.length === 0) {
+      return NextResponse.json({ message: 'Cupom não encontrado para o ID fornecido.' }, { status: 404 });
+    }
+
+    return NextResponse.json({ data: rows[0] }, { status: 200 });    
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    return NextResponse.json({ message: errorMessage }, { status: 500 });
+  }
 }
 
 export async function DELETE(request: Request): Promise<NextResponse> {
@@ -68,12 +88,22 @@ export async function DELETE(request: Request): Promise<NextResponse> {
 
     // Se result não tem rowCount, pode simplesmente verificar se houve erro
     if (result?.rowCount && result.rowCount > 0) {
-      return NextResponse.json({ message: 'Cupom deletado com sucesso!' }, { status: 200 });
+      return NextResponse.json(
+        { message: "Cupom deletado com sucesso!" },
+        { status: 200 }
+      );
     } else {
-      return NextResponse.json({ message: 'Cupom não encontrado' }, { status: 404 });
+      return NextResponse.json(
+        { message: "Cupom não encontrado" },
+        { status: 404 }
+      );
     }
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-    return NextResponse.json({ message: 'Erro ao deletar o cupom', error: errorMessage }, { status: 500 });
+    const errorMessage =
+      error instanceof Error ? error.message : "Erro desconhecido";
+    return NextResponse.json(
+      { message: "Erro ao deletar o cupom", error: errorMessage },
+      { status: 500 }
+    );
   }
 }
