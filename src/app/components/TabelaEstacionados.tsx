@@ -114,7 +114,7 @@ const TablePlaca: React.FC = () => {
                                 <button
                                     className="pr-3"
                                     onClick={() => console.log('Estacionar', placa.id)}>
-                                        Estacionar
+                                        Liberar
                                 </button>
                                 <button 
                                     className="text-teal-600 mr-6 underline decoration-1"
