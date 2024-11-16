@@ -1,15 +1,45 @@
 import { sql } from "@vercel/postgres";
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-      const { rows } = await sql`SELECT * FROM "tarifas"`;
-      return NextResponse.json({ data: rows }, { status: 200 });
+    const { rows } = await sql`SELECT * FROM "tarifas"`;
+    return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
-      console.error('Erro ao buscar tarifas:', error);
-      return NextResponse.json({ message: 'Erro ao buscar tarifas', error: error }, { status: 500 });
+    console.error('Erro ao buscar tarifas:', error);
+    return NextResponse.json({ message: 'Erro ao buscar tarifas', error: error }, { status: 500 });
   }
 }
+
+export async function GET_BY_TYPE(request: NextRequest): Promise<NextResponse> {
+  try {
+    // Obtém o parâmetro 'tipoVeiculo' da query string
+    const { searchParams } = new URL(request.url);
+    const tipoVeiculo = searchParams.get('tipoVeiculo');  // "tipoVeiculo" passado como query string
+
+    if (!tipoVeiculo) {
+      return NextResponse.json({ message: 'Tipo de veículo não fornecido.' }, { status: 400 });
+    }
+
+    // Busca a tarifa associada ao tipo de veículo
+    const { rows } = await sql`
+      SELECT t."horaCobrada", t."valor", tv."veiculo"
+      FROM "tarifas" t
+      JOIN "tipoVeiculo" tv ON t."tipoVeiculoId" = tv."id"
+      WHERE tv."veiculo" = ${tipoVeiculo}
+    `;
+
+    if (rows.length === 0) {
+      return NextResponse.json({ message: 'Tarifa não encontrada para esse tipo de veículo.' }, { status: 404 });
+    }
+
+    return NextResponse.json({ data: rows[0] }, { status: 200 });
+  } catch (error) {
+    console.error('Erro ao buscar tarifa:', error);
+    return NextResponse.json({ message: 'Erro ao buscar tarifa', error: error }, { status: 500 });
+  }
+}
+
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {

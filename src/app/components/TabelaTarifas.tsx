@@ -109,8 +109,16 @@ const TabelaTarifas: React.FC= () => {
                             <td>{obterNomeTipoVeiculo(tarifa.tipoVeiculoId)}</td>
                             <td>R$ {tarifa.valor}</td>
                             <td>
-                              {/*   <button onClick={() => onEdit(tarifa)}>Editar</button>*/}
-                                <button onClick={() => handleDeleteTarifa(tarifa.id)}>Excluir</button>
+                                <button
+                                    className="pr-3"
+                                    onClick={() => onEdit(tarifa)}>
+                                        Editar
+                                </button>
+                                <button 
+                                    className="text-teal-600 mr-6 underline decoration-1"
+                                    onClick={() => handleDeleteTarifa(tarifa.id)}>
+                                        Excluir
+                                </button>
                             </td>
                         </tr>
                     ))}
