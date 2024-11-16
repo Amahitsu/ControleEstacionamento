@@ -54,7 +54,6 @@ const FormSection: React.FC = () => {
         }
 
         try {
-            // Certifique-se de que estamos enviando o ID do tipoVeiculo (não o nome)
             const response = await fetch(apiUrls.tarifas, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,7 +111,7 @@ const FormSection: React.FC = () => {
                 onChange={handleValorChange}
             />
             <button className={styles.confirmButton} onClick={handleAddTarifa}>
-                Confirmar
+                Salvar
             </button>
         </div>
     );

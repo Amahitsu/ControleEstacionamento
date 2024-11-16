@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import FormSection from '../app/components/FormSection';
 import Header from '../app/components/Header';
 import styles from '../app/styles/Home.module.css';
-import TableSection from './components/TabelaEstacionados';
+import TableSection from './components/TabelaCupom';
 
 
 export const metadata: Metadata = {

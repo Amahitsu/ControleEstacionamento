@@ -91,6 +91,30 @@ const TablePlaca: React.FC = () => {
         }
     };
 
+    const estacionarPlaca = async (id: number) => {
+        try {
+            const response = await fetch(apiUrls.cupons, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    dataHoraEntrada: formatarDataHoraEntrada(new Date()),
+                    placaID: id
+                }) 
+            });
+
+            if (!response.ok) throw new Error('Erro ao estacionar veículo');
+        } catch (error) {
+            console.error(error);
+            alert('Não foi possível estacionar veículo');
+        }
+    }
+
+    const formatarDataHoraEntrada = (data: Date) => {
+        return data.toTimeString().split(' ')[0];
+    }
+
     return (
         <div className={styles.tableSection}>
             <table>
@@ -112,12 +136,12 @@ const TablePlaca: React.FC = () => {
                             <td>{placa.cor}</td>
                             <td>
                                 <button
-                                    className="pr-3"
-                                    onClick={() => console.log('Estacionar', placa.id)}>
+                                    className="text-teal-600 underline decoration-1 pr-3"
+                                    onClick={() => estacionarPlaca(placa.id)}>
                                         Estacionar
                                 </button>
                                 <button 
-                                    className="text-teal-600 mr-6 underline decoration-1"
+                                    className="text-teal-600 underline decoration-1"
                                     onClick={() => excluirPlaca(placa.id)}>
                                     Excluir
                                 </button>

@@ -141,7 +141,7 @@ const FormSection: React.FC = () => {
                 onChange={(e) => setCor(e.target.value)}
             />*/}
             <button className={styles.confirmButton} onClick={handleAddPlaca}>
-                Confirmar
+                Buscar
             </button>
         </div>
     );

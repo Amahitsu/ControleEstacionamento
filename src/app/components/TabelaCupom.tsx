@@ -4,12 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { apiUrls } from '../config/config';
 import styles from '../styles/Home.module.css';
 
-interface Placa {
+interface Cupom {
     id: number;
-    placa: string;
-    tipoVeiculoId: number;
-    modeloId: number;
-    cor: string;
+    dataHoraEntrada: string;
+    dataHoraSaida: string;
+    descricao: string;
+    valorTotal: number;
+    placaID: number;
 }
 
 interface TipoVeiculo {
@@ -22,21 +23,21 @@ interface Modelo {
     nomeModelo: string;
 }
 
-const TablePlaca: React.FC = () => {
-    const [placas, setPlacas] = useState<Placa[]>([]);
+const TableCupom: React.FC = () => {
+    const [cupons, setCupons] = useState<Cupom[]>([]);
     const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
     const [modelos, setModelos] = useState<Modelo[]>([]);
     const [pagina] = useState(1);
    // const itensPorPagina = 10;
 
     useEffect(() => {
-        const fetchPlacas = async () => {
+        const fetchCupons = async () => {
             try {
-                const response = await fetch(`/api/placa`);
+                const response = await fetch(apiUrls.cupons);
                 const data = await response.json();
-                setPlacas(data.data);
+                setCupons(data.data);
             } catch (error) {
-                console.error("Erro ao buscar placas:", error);
+                console.error("Erro ao buscar cupom:", error);
             }
         };
 
@@ -60,9 +61,9 @@ const TablePlaca: React.FC = () => {
             }
         };
 
-        fetchPlacas();
-        fetchTiposVeiculo();
-        fetchModelos();
+        fetchCupons();
+        //fetchTiposVeiculo();
+        //fetchModelos();
     }, [pagina]);
 
     const obterNomeTipoVeiculo = (id: number) => {
@@ -75,16 +76,16 @@ const TablePlaca: React.FC = () => {
         return modelo ? modelo.nomeModelo : 'Desconhecido';
     };
 
-    const excluirPlaca = async (id: number) => {
+    const excluirCupom = async (id: number) => {
         try {
-            const response = await fetch(`/api/placa?id=${id}`, {
+            const response = await fetch(`/api/cupom?id=${id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
-                setPlacas((prevPlacas) => prevPlacas.filter((placa) => placa.id !== id));
-                console.log("Placa excluída com sucesso.");
+                setCupons((prevCupons) => prevCupons.filter((cupom) => cupom.id !== id));
+                console.log("Cupom excluída com sucesso.");
             } else {
-                console.error("Erro ao excluir placa:", await response.json());
+                console.error("Erro ao excluir cupom:", await response.json());
             }
         } catch (error) {
             console.error("Erro ao fazer requisição de exclusão:", error);
@@ -96,29 +97,33 @@ const TablePlaca: React.FC = () => {
             <table>
                 <thead>
                     <tr className={styles.tableHeader}>
+                        <th>Cupom</th>
+                        <th>Hora entrada</th>
+                        <th>Valor total</th>
                         <th>Placa</th>
-                        <th>Tipo</th>
                         <th>Modelo</th>
                         <th>Cor</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {placas.map((placa) => (
-                        <tr key={placa.id}>
-                            <td>{placa.placa}</td>
-                            <td>{obterNomeTipoVeiculo(placa.tipoVeiculoId)}</td>
-                            <td>{obterNomeModelo(placa.modeloId)}</td>
-                            <td>{placa.cor}</td>
+                    {cupons.map((cupom) => (
+                        <tr key={cupom.id}>
+                            <td>{cupom.id}</td>
+                            <td>{cupom.dataHoraEntrada}</td>
+                            <td>{cupom.valorTotal}</td>
+                            <td>{cupom.placaID}</td>
+                            <td>Modelo</td>
+                            <td>Cor</td>
                             <td>
                                 <button
                                     className="pr-3"
-                                    onClick={() => console.log('Estacionar', placa.id)}>
+                                    onClick={() => console.log('Estacionar', cupom.id)}>
                                         Liberar
                                 </button>
                                 <button 
                                     className="text-teal-600 mr-6 underline decoration-1"
-                                    onClick={() => excluirPlaca(placa.id)}>
+                                    onClick={() => excluirCupom(cupom.id)}>
                                     Excluir
                                 </button>
                             </td>
@@ -137,4 +142,4 @@ const TablePlaca: React.FC = () => {
     );
 };
 
-export default TablePlaca;
+export default TableCupom;

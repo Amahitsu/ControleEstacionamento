@@ -12,11 +12,11 @@ export async function GET(): Promise<NextResponse> {
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
-    const { placa, id_modelo } = await request.json(); // Extrai os dados do corpo da requisição
+    const { placaID, dataHoraEntrada } = await request.json(); // Extrai os dados do corpo da requisição
     const currentDate = new Date().toISOString(); // Data atual no formato ISO
     const { rows } = await sql`
-      INSERT INTO cupom (dataHoraEntrada, placa, id_modelo)
-      VALUES (${currentDate}, ${placa}, ${id_modelo})
+      INSERT INTO cupom ("dataHoraEntrada", "placaID")
+      VALUES (${dataHoraEntrada}, ${placaID})
       RETURNING *;`; // Retorna todos os campos do novo registro
     return NextResponse.json({ data: rows[0] }, { status: 201 }); // Retorna o registro inserido
   } catch (error) {

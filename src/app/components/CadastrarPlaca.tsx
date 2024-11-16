@@ -150,7 +150,7 @@ const FormSection: React.FC = () => {
                 onChange={(e) => setColor(e.target.value)}
             />
             <button className={styles.confirmButton} onClick={handleAddCar}>
-                Confirmar
+                Salvar
             </button>
         </div>
     );
