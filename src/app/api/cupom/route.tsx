@@ -3,7 +3,24 @@ import { NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const { rows } = await sql`SELECT * FROM "cupom"`;
+    const { rows } = await sql`
+      SELECT 
+          c.id AS "id",
+          c."dataHoraEntrada",
+          c."dataHoraSaida",
+          p."placa" AS "placa",
+          tv."id" AS "idTipoVeiculo",  -- Id do tipo de veículo
+          tv."veiculo" AS "tipoVeiculo",  -- Nome do tipo de veículo
+          m."nomeModelo" AS "modelo"  -- Nome do modelo
+      FROM 
+          "cupom" c
+      JOIN 
+          "placa" p ON p.id = c."placaID"
+      JOIN 
+          "tipoVeiculo" tv ON tv.id = p."tipoVeiculoId"
+      JOIN
+          "modelo" m ON m.id = p."modeloId";  -- Assumindo que o modelo está na tabela "modelo"
+    `;
     return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
