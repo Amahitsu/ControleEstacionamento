@@ -12,7 +12,7 @@ const Header: React.FC = () => {
             setDateTime(`${now.toLocaleDateString()} ${now.toLocaleTimeString()}`);
         };
 
-        updateDateTime(); // Atualiza imediatamente após o componente ser montado
+        updateDateTime(); 
         const timer = setInterval(updateDateTime, 1000);
 
         return () => clearInterval(timer);

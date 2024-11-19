@@ -109,7 +109,7 @@ const FormSection: React.FC = () => {
                 placeholder="Placa"
                 value={placa}
                 onChange={(e) => setPlaca(e.target.value)}
-                maxLength={7} // Limita a 7 caracteres
+                maxLength={7} 
             />
             <select
                 className="w-full mb-2.5"

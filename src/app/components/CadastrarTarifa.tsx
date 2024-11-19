@@ -10,11 +10,10 @@ const FormSection: React.FC = () => {
     const [valor, setValor] = useState('');
     const [tiposVeiculo, setTiposVeiculo] = useState<{ veiculo: string }[]>([]);
 
-    // Função para formatar o valor como moeda real
-    const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
     
-        // Formata para duas casas decimais
+    const handleValorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/\D/g, ''); 
+        
         const formattedValue = (Number(value) / 100).toLocaleString('pt-BR', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
@@ -22,7 +21,7 @@ const FormSection: React.FC = () => {
         setValor(formattedValue);
     }
     
-    //função para puxar os tipos de Veiculos cadastrados.
+    
     useEffect(() => {
         const fetchTiposVeiculo = async () => {
             try {
@@ -59,7 +58,7 @@ const FormSection: React.FC = () => {
                     'Content-Type': 'application/json',
                 },
                 method: 'POST',
-                body: JSON.stringify({ horaCobrada, tipoVeiculo, valor }), // Envia o ID, não o nome
+                body: JSON.stringify({ horaCobrada, tipoVeiculo, valor }),
             });
 
             if (!response.ok) throw new Error('Erro ao adicionar a tarifa');
@@ -68,7 +67,7 @@ const FormSection: React.FC = () => {
             console.log('Tarifa adicionada:', newTarifa);
             alert('Tarifa adicionada com sucesso!');
 
-            // Limpa os campos após a adição
+          
             setHoraCobrada('');
             setTipoVeiculo('');
             setValor('');
@@ -86,7 +85,7 @@ const FormSection: React.FC = () => {
                 placeholder="Hora Cobrada"
                 value={horaCobrada}
                 onChange={(e) => setHoraCobrada(e.target.value)}
-                maxLength={5} // Limita a 5 caracteres
+                maxLength={5} 
             />
             <select
                  className="w-full mb-2.5"

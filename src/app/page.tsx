@@ -7,7 +7,7 @@ import TableSection from './components/TabelaCupom';
 
 
 export const metadata: Metadata = {
-    title: 'Tela de Controle',
+    title: 'Controle de Estacionamento',
     description: 'Controle de entradas e saídas',
 };
 
