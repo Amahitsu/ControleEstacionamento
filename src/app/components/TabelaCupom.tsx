@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { apiUrls } from '../config/config';
-import styles from '../styles/Home.module.css';
+import React, { useEffect, useState } from "react";
+import { apiUrls } from "../config/config";
+import styles from "../styles/Home.module.css";
 
 interface Cupom {
     id: number;
@@ -38,7 +38,7 @@ const TableCupom: React.FC = () => {
 
         const fetchTarifas = async () => {
             try {
-                const response = await fetch('/api/tarifas');
+                const response = await fetch("/api/tarifas");
                 const data = await response.json();
                 setTarifas(data.data);
             } catch (error) {
@@ -55,9 +55,8 @@ const TableCupom: React.FC = () => {
         setModalAberta(true);
     };
 
-    // Função para obter a tarifa de um tipo de veículo
     const obterTarifaPorTipoVeiculo = (idTipoVeiculo: string): number => {
-        const tarifa = tarifas.find(t => t.tipoVeiculoId === idTipoVeiculo);
+        const tarifa = tarifas.find((t) => t.tipoVeiculoId === idTipoVeiculo);
         return tarifa ? tarifa.valor : 0;
     };
 
@@ -89,24 +88,26 @@ const TableCupom: React.FC = () => {
         return horasCobrar * valorTarifa;
     };
 
+    // Ajuste para formatar datas com fuso horário de Brasília
     const formatarData = (data: string): string => {
         const dataObj = new Date(data);
-        return dataObj.toLocaleString('pt-BR', {
-            year: 'numeric', // Exibe o ano
-            month: 'numeric', // Exibe o mês por extenso
-            day: 'numeric', // Exibe o dia
-            hour: 'numeric', // Exibe a hora
-            minute: 'numeric', // Exibe os minutos
-            second: 'numeric', // Exibe os segundos
+        return dataObj.toLocaleString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
         });
     };
 
     const formatarHora = (hora: string | null): string => {
         if (hora) {
             const horaObj = new Date(hora);
-            return horaObj.toLocaleTimeString('pt-BR');
+            return horaObj.toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo" });
         }
-        return new Date().toLocaleTimeString('pt-BR'); // Se a hora for null, retorna a hora atual
+        return new Date().toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo" });
     };
 
     const fecharModal = () => {
@@ -126,14 +127,13 @@ const TableCupom: React.FC = () => {
 
             const dataSaidaISO = new Date().toISOString();
 
-            // Usar o valor total correto aqui para atualizar o cupom
             const resposta = await fetch(`/api/cupom?id=${cupomSelecionado.id}`, {
-                method: 'PUT',
+                method: "PUT",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    valorTotal: valorTotal, // Enviar o valor total calculado
+                    valorTotal: valorTotal,
                     dataHoraSaida: dataSaidaISO,
                 }),
             });
@@ -141,13 +141,13 @@ const TableCupom: React.FC = () => {
             const data = await resposta.json();
 
             if (resposta.ok) {
-                console.log('Data de saída e valor total atualizados:', data);
+                console.log("Data de saída e valor total atualizados:", data);
                 fecharModal();
             } else {
-                console.error('Erro ao atualizar dataHoraSaida e valor total:', data.message);
+                console.error("Erro ao atualizar dataHoraSaida e valor total:", data.message);
             }
         } catch (error) {
-            console.error('Erro ao liberar cupom:', error);
+            console.error("Erro ao liberar cupom:", error);
         }
     };
 
@@ -193,7 +193,6 @@ const TableCupom: React.FC = () => {
                 </tbody>
             </table>
 
-            {/* Modal */}
             {modalAberta && cupomSelecionado && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
