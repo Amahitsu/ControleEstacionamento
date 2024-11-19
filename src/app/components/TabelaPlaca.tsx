@@ -26,8 +26,6 @@ const TablePlaca: React.FC = () => {
     const [placas, setPlacas] = useState<Placa[]>([]);
     const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
     const [modelos, setModelos] = useState<Modelo[]>([]);
-    const [pagina] = useState(1);
-   // const itensPorPagina = 10;
 
     useEffect(() => {
         const fetchPlacas = async () => {
@@ -63,15 +61,15 @@ const TablePlaca: React.FC = () => {
         fetchPlacas();
         fetchTiposVeiculo();
         fetchModelos();
-    }, [pagina]);
+    }, []);
 
     const obterNomeTipoVeiculo = (id: number) => {
-        const tipo = tiposVeiculo.find((tipo) => tipo.id === id);  
+        const tipo = tiposVeiculo.find((tipo) => tipo.id === id);
         return tipo ? tipo.veiculo : 'Desconhecido';
     };
 
     const obterNomeModelo = (id: number) => {
-        const modelo = modelos.find((modelo) => modelo.id === id);  
+        const modelo = modelos.find((modelo) => modelo.id === id);
         return modelo ? modelo.nomeModelo : 'Desconhecido';
     };
 
@@ -93,27 +91,43 @@ const TablePlaca: React.FC = () => {
 
     const estacionarPlaca = async (id: number) => {
         try {
+            // Obtenha a data e hora de entrada no formato ISO
+            const dataHoraEntrada = formatarDataHoraEntrada(new Date());
+
+            console.log("Data e Hora de Entrada:", dataHoraEntrada);  // Verifique a data no console para debug
+
             const response = await fetch(apiUrls.cupons, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 method: 'POST',
                 body: JSON.stringify({
-                    dataHoraEntrada: formatarDataHoraEntrada(new Date()),
+                    dataHoraEntrada: dataHoraEntrada,
                     placaID: id
-                }) 
+                })
             });
 
-            if (!response.ok) throw new Error('Erro ao estacionar veículo');
+            if (response.ok) {
+                alert('Veículo estacionado com sucesso!');
+            } else {
+                throw new Error('Erro ao estacionar veículo');
+            }
         } catch (error) {
             console.error(error);
-            alert('Não foi possível estacionar veículo');
+            alert('Não foi possível estacionar o veículo');
         }
     }
 
+    // Formata a data e hora para enviar para o banco (timestamp)
     const formatarDataHoraEntrada = (data: Date) => {
-        return data.toTimeString().split(' ')[0];
-    }
+        // Exibe a data completa no formato local
+        console.log("Data Original:", data);
+    
+        // Converte para o formato ISO 8601 local, sem UTC
+        const dataLocal = new Date(data.getTime() - data.getTimezoneOffset() * 60000); // Ajusta para horário local
+        return dataLocal.toISOString();  // Exemplo: '2024-11-18T12:34:56.789'
+    };
+    
 
     return (
         <div className={styles.tableSection}>
@@ -138,9 +152,9 @@ const TablePlaca: React.FC = () => {
                                 <button
                                     className="text-teal-600 underline decoration-1 pr-3"
                                     onClick={() => estacionarPlaca(placa.id)}>
-                                        Estacionar
+                                    Estacionar
                                 </button>
-                                <button 
+                                <button
                                     className="text-teal-600 underline decoration-1"
                                     onClick={() => excluirPlaca(placa.id)}>
                                     Excluir
@@ -150,13 +164,6 @@ const TablePlaca: React.FC = () => {
                     ))}
                 </tbody>
             </table>
-            {/* 
-            <ul className={styles.pagination}>
-                <li><button className="mr-6" onClick={paginaAnterior} disabled={pagina === 1}>Anterior</button></li>
-                <li><span className="mr-6">Página {pagina}</span></li>
-                <li><button className="mr-6 underline decoration-1" onClick={proximaPagina}>Próxima</button></li>
-            </ul>
-            */}
         </div>
     );
 };

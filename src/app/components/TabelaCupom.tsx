@@ -15,15 +15,15 @@ interface Cupom {
 }
 
 interface Tarifa {
-    tipoVeiculo: string;
+    tipoVeiculoId: string;
     valor: number;
 }
 
 const TableCupom: React.FC = () => {
-    const [cupons, setCupons] = useState<Cupom[]>([]);
+    const [cupons, setCupons] = useState<Cupom[]>([]); 
     const [modalAberta, setModalAberta] = useState(false);
     const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null);
-    const [tarifas, setTarifas] = useState<Tarifa[]>([]); // Inicializando como um array vazio
+    const [tarifas, setTarifas] = useState<Tarifa[]>([]);
 
     useEffect(() => {
         const fetchCupons = async () => {
@@ -40,8 +40,7 @@ const TableCupom: React.FC = () => {
             try {
                 const response = await fetch('/api/tarifas');
                 const data = await response.json();
-                
-                setTarifas(data.data); // Armazena as tarifas no estado
+                setTarifas(data.data);
             } catch (error) {
                 console.error("Erro ao buscar tarifas:", error);
             }
@@ -58,12 +57,8 @@ const TableCupom: React.FC = () => {
 
     // Função para obter a tarifa de um tipo de veículo
     const obterTarifaPorTipoVeiculo = (idTipoVeiculo: string): number => {
-        
-        if (!tarifas.length) {
-            return 0; // Retorna 0 se as tarifas não estiverem carregadas
-        }
         const tarifa = tarifas.find(t => t.tipoVeiculoId === idTipoVeiculo);
-        return tarifa ? tarifa.valor : 0; // Retorna a tarifa ou 0 se não encontrar
+        return tarifa ? tarifa.valor : 0;
     };
 
     const calcularValorTotal = (
@@ -71,19 +66,47 @@ const TableCupom: React.FC = () => {
         dataHoraSaida: string | null,
         idTipoVeiculo: string
     ): number => {
-        const valorTarifa = obterTarifaPorTipoVeiculo(idTipoVeiculo); // Busca a tarifa
+        const valorTarifa = obterTarifaPorTipoVeiculo(idTipoVeiculo);
+
+        if (valorTarifa <= 0) {
+            console.error("Tarifa inválida para o tipo de veículo");
+            return 0;
+        }
 
         const dataAtual = new Date();
-        const dataEntrada = new Date(dataAtual.toDateString() + ' ' + dataHoraEntrada);
-
-        const dataSaida = dataHoraSaida ? new Date(dataAtual.toDateString() + ' ' + dataHoraSaida) : dataAtual;
+        const dataEntrada = new Date(dataHoraEntrada);
+        const dataSaida = dataHoraSaida ? new Date(dataHoraSaida) : dataAtual;
 
         const diferencaEmMillis = dataSaida.getTime() - dataEntrada.getTime();
         const diferencaEmHoras = diferencaEmMillis / (1000 * 60 * 60);
 
-        const horasCobrar = Math.ceil(diferencaEmHoras);
+        if (diferencaEmHoras < 0) {
+            console.error("A data de saída é anterior à data de entrada.");
+            return 0;
+        }
 
+        const horasCobrar = Math.ceil(diferencaEmHoras);
         return horasCobrar * valorTarifa;
+    };
+
+    const formatarData = (data: string): string => {
+        const dataObj = new Date(data);
+        return dataObj.toLocaleString('pt-BR', {
+            year: 'numeric', // Exibe o ano
+            month: 'numeric', // Exibe o mês por extenso
+            day: 'numeric', // Exibe o dia
+            hour: 'numeric', // Exibe a hora
+            minute: 'numeric', // Exibe os minutos
+            second: 'numeric', // Exibe os segundos
+        });
+    };
+
+    const formatarHora = (hora: string | null): string => {
+        if (hora) {
+            const horaObj = new Date(hora);
+            return horaObj.toLocaleTimeString('pt-BR');
+        }
+        return new Date().toLocaleTimeString('pt-BR'); // Se a hora for null, retorna a hora atual
     };
 
     const fecharModal = () => {
@@ -101,18 +124,16 @@ const TableCupom: React.FC = () => {
                 cupomSelecionado.idTipoVeiculo
             );
 
-            const dataEntrada = new Date(cupomSelecionado.dataHoraEntrada);
-            const dataSaida = new Date();
-            const dataSaidaISO = dataSaida.toISOString();
-            const horaCobrada = calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.dataHoraSaida, cupomSelecionado.idTipoVeiculo)
-            debugger
+            const dataSaidaISO = new Date().toISOString();
+
+            // Usar o valor total correto aqui para atualizar o cupom
             const resposta = await fetch(`/api/cupom?id=${cupomSelecionado.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    valorTotal: horaCobrada,
+                    valorTotal: valorTotal, // Enviar o valor total calculado
                     dataHoraSaida: dataSaidaISO,
                 }),
             });
@@ -122,7 +143,6 @@ const TableCupom: React.FC = () => {
             if (resposta.ok) {
                 console.log('Data de saída e valor total atualizados:', data);
                 fecharModal();
-                //fetchCupons(); 
             } else {
                 console.error('Erro ao atualizar dataHoraSaida e valor total:', data.message);
             }
@@ -137,10 +157,10 @@ const TableCupom: React.FC = () => {
                 <thead>
                     <tr className={styles.tableHeader}>
                         <th>Cupom</th>
-                        <th>Hora entrada</th>
-                        <th>Valor total</th>
+                        <th>Hora Entrada</th>
+                        <th>Valor Total</th>
                         <th>Placa</th>
-                        <th>Tipo veículo</th>
+                        <th>Tipo Veículo</th>
                         <th>Modelo</th>
                         <th>Ações</th>
                     </tr>
@@ -149,7 +169,7 @@ const TableCupom: React.FC = () => {
                     {cupons.map((cupom) => (
                         <tr key={cupom.id}>
                             <td>{cupom.id}</td>
-                            <td>{cupom.dataHoraEntrada}</td>
+                            <td>{formatarData(cupom.dataHoraEntrada)}</td>
                             <td>
                                 R$ {calcularValorTotal(
                                     cupom.dataHoraEntrada,
@@ -183,9 +203,8 @@ const TableCupom: React.FC = () => {
                             <p><strong>Placa:</strong> {cupomSelecionado.placa}</p>
                             <p><strong>Valor Total: R$ </strong> {calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.dataHoraSaida, cupomSelecionado.idTipoVeiculo).toFixed(2)}</p>
 
-                            <p><strong>Hora Entrada:</strong> {cupomSelecionado.dataHoraEntrada}</p>
-                            <p><strong>Hora Saída:</strong> {cupomSelecionado.dataHoraSaida ? new Date(cupomSelecionado.dataHoraSaida).toLocaleTimeString() : new Date().toLocaleTimeString()}</p>
-                            
+                            <p><strong>Hora Entrada:</strong> {formatarData(cupomSelecionado.dataHoraEntrada)}</p>
+                            <p><strong>Hora Saída:</strong> {formatarHora(cupomSelecionado.dataHoraSaida)}</p>
                         </div>
 
                         <div className="flex justify-end space-x-4 mt-6">
@@ -196,7 +215,7 @@ const TableCupom: React.FC = () => {
                                 Fechar
                             </button>
                             <button
-                                onClick={liberarCupomNoBanco} // Chama a função para atualizar
+                                onClick={liberarCupomNoBanco}
                                 className="px-4 py-2 bg-green-600 text-white rounded"
                             >
                                 Confirmar

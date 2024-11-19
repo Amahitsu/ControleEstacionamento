@@ -89,8 +89,8 @@ export async function PUT(request: Request): Promise<NextResponse> {
 
     const { rows } = await sql`
       UPDATE tarifas
-      SET horaCobrada = ${horaCobrada}, tipoVeiculoId = ${tipoVeiculoId}, valor = ${valor}
-      WHERE id = ${id}
+      SET "horaCobrada" = ${horaCobrada}, "tipoVeiculoId" = ${tipoVeiculoId}, "valor" = ${valor}
+      WHERE "id" = ${id}
       RETURNING *
     `;
 
