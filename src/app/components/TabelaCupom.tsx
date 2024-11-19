@@ -72,9 +72,9 @@ const TableCupom: React.FC = () => {
             return 0;
         }
 
-        const dataAtual = new Date();
+        // Ajustar datas ao fuso horário de Brasília
         const dataEntrada = new Date(dataHoraEntrada);
-        const dataSaida = dataHoraSaida ? new Date(dataHoraSaida) : dataAtual;
+        const dataSaida = dataHoraSaida ? new Date(dataHoraSaida) : new Date();
 
         const diferencaEmMillis = dataSaida.getTime() - dataEntrada.getTime();
         const diferencaEmHoras = diferencaEmMillis / (1000 * 60 * 60);
@@ -92,13 +92,13 @@ const TableCupom: React.FC = () => {
     const formatarData = (data: string): string => {
         const dataObj = new Date(data);
         return dataObj.toLocaleString("pt-BR", {
-            timeZone: "America/Sao_Paulo",
+            timeZone: "America/Sao_Paulo", // Fuso horário explícito
             year: "numeric",
-            month: "numeric",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
         });
     };
 
@@ -121,11 +121,11 @@ const TableCupom: React.FC = () => {
         try {
             const valorTotal = calcularValorTotal(
                 cupomSelecionado.dataHoraEntrada,
-                new Date().toISOString(),
+                new Date().toISOString(), // Hora de saída em UTC
                 cupomSelecionado.idTipoVeiculo
             );
 
-            const dataSaidaISO = new Date().toISOString();
+            const dataSaidaISO = new Date().toISOString(); // Armazenar a hora de saída em UTC
 
             const resposta = await fetch(`/api/cupom?id=${cupomSelecionado.id}`, {
                 method: "PUT",
