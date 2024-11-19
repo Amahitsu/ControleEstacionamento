@@ -20,12 +20,13 @@ interface Tarifa {
 }
 
 const TableCupom: React.FC = () => {
-    const [cupons, setCupons] = useState<Cupom[]>([]); 
+    const [cupons, setCupons] = useState<Cupom[]>([]);
     const [modalAberta, setModalAberta] = useState(false);
     const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null);
     const [tarifas, setTarifas] = useState<Tarifa[]>([]);
 
-    const fusoHorario = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo"; // Valor padrão, caso a variável não seja definida
+    const fusoHorario = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
+    console.log("Fuso Horário Configurado:", fusoHorario);
 
     useEffect(() => {
         const fetchCupons = async () => {
