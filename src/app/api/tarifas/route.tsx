@@ -11,7 +11,7 @@ export async function GET(): Promise<NextResponse> {
   }
 }
 
-export async function GET_BY_TYPE(request: NextRequest): Promise<NextResponse> {
+/* export async function GET_BY_TYPE(request: NextRequest): Promise<NextResponse> {
   try {
     // Obtém o parâmetro 'tipoVeiculo' da query string
     const { searchParams } = new URL(request.url);
@@ -39,7 +39,7 @@ export async function GET_BY_TYPE(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ message: 'Erro ao buscar tarifa', error: error }, { status: 500 });
   }
 }
-
+ */
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
