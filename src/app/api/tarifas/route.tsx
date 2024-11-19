@@ -1,7 +1,7 @@
 import { sql } from "@vercel/postgres";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
   try {
     const { rows } = await sql`SELECT * FROM "tarifas"`;
     return NextResponse.json({ data: rows }, { status: 200 });

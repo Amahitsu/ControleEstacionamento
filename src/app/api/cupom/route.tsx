@@ -32,7 +32,6 @@ export async function GET(): Promise<NextResponse> {
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     const { placaID, dataHoraEntrada } = await request.json(); // Extrai os dados do corpo da requisição
-    const currentDate = new Date().toISOString(); // Data atual no formato ISO
     const { rows } = await sql`
       INSERT INTO cupom ("dataHoraEntrada", "placaID")
       VALUES (${dataHoraEntrada}, ${placaID})
