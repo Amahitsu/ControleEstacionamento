@@ -25,6 +25,8 @@ const TableCupom: React.FC = () => {
     const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null);
     const [tarifas, setTarifas] = useState<Tarifa[]>([]);
 
+    const fusoHorario = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo"; // Valor padrão, caso a variável não seja definida
+
     useEffect(() => {
         const fetchCupons = async () => {
             try {
@@ -72,7 +74,7 @@ const TableCupom: React.FC = () => {
             return 0;
         }
 
-        // Ajustar datas ao fuso horário de Brasília
+        // Ajustar datas ao fuso horário configurado
         const dataEntrada = new Date(dataHoraEntrada);
         const dataSaida = dataHoraSaida ? new Date(dataHoraSaida) : new Date();
 
@@ -88,11 +90,11 @@ const TableCupom: React.FC = () => {
         return horasCobrar * valorTarifa;
     };
 
-    // Ajuste para formatar datas com fuso horário de Brasília
+    // Ajuste para formatar datas com fuso horário configurado
     const formatarData = (data: string): string => {
         const dataObj = new Date(data);
         return dataObj.toLocaleString("pt-BR", {
-            timeZone: "America/Sao_Paulo", // Fuso horário explícito
+            timeZone: fusoHorario, // Usando a variável de ambiente
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
@@ -105,9 +107,9 @@ const TableCupom: React.FC = () => {
     const formatarHora = (hora: string | null): string => {
         if (hora) {
             const horaObj = new Date(hora);
-            return horaObj.toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo" });
+            return horaObj.toLocaleTimeString("pt-BR", { timeZone: fusoHorario });
         }
-        return new Date().toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo" });
+        return new Date().toLocaleTimeString("pt-BR", { timeZone: fusoHorario });
     };
 
     const fecharModal = () => {
