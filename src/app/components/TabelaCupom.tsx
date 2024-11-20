@@ -93,9 +93,10 @@ const TableCupom: React.FC = () => {
 
     // Ajuste para formatar datas com fuso horário configurado
     const formatarData = (data: string): string => {
+        const timeZone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo"; // Usar o fuso horário da variável
         const dataObj = new Date(data);
         return dataObj.toLocaleString("pt-BR", {
-            timeZone: fusoHorario, // Usando a variável de ambiente
+            timeZone: timeZone, // Usando a variável para determinar o fuso horário
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
