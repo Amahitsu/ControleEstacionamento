@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import moment from "moment-timezone"; // Adicionado import
 import { apiUrls } from "../config/config";
 import styles from "../styles/Home.module.css";
 
@@ -25,49 +26,12 @@ const TableCupom: React.FC = () => {
     const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null);
     const [tarifas, setTarifas] = useState<Tarifa[]>([]);
 
-    const fusoHorario = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
-    console.log("Fuso Horário Configurado:", fusoHorario);
-
-    // Função genérica para criar um objeto Date com suporte ao UTC
-    const criarDataComUTC = (data: string): Date => {
-        if (!data.includes("Z")) {
-            return new Date(data + "Z"); // Adiciona 'Z' se não existir
-        }
-        return new Date(data);
+    // Função para formatar datas usando moment-timezone
+    const formatarDataMoment = (data: string): string => {
+        return moment.utc(data).tz("America/Sao_Paulo").format("DD/MM/YYYY HH:mm:ss");
     };
 
-    // Ajuste para formatar datas com fuso horário configurado
-    const formatarData = (data: string): string => {
-        try {
-            const timeZone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
-            const dataObj = criarDataComUTC(data);
-            return dataObj.toLocaleString("pt-BR", {
-                timeZone,
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-            });
-        } catch (error) {
-            console.error("Erro ao formatar data:", error);
-            return "Data Inválida";
-        }
-    };
-
-    // Ajuste para formatar horas com fuso horário configurado
-    const formatarHora = (hora: string | null): string => {
-        try {
-            const timeZone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
-            const horaObj = hora ? criarDataComUTC(hora) : new Date();
-            return horaObj.toLocaleTimeString("pt-BR", { timeZone });
-        } catch (error) {
-            console.error("Erro ao formatar hora:", error);
-            return "Hora Inválida";
-        }
-    };
-
+    // Fetch dos cupons
     const fetchCupons = async () => {
         try {
             const response = await fetch(apiUrls.cupons);
@@ -78,6 +42,7 @@ const TableCupom: React.FC = () => {
         }
     };
 
+    // Fetch das tarifas
     const fetchTarifas = async () => {
         try {
             const response = await fetch("/api/tarifas");
@@ -115,11 +80,10 @@ const TableCupom: React.FC = () => {
             return 0;
         }
 
-        const dataEntrada = criarDataComUTC(dataHoraEntrada);
-        const dataSaida = dataHoraSaida ? criarDataComUTC(dataHoraSaida) : new Date();
+        const dataEntrada = moment.utc(dataHoraEntrada);
+        const dataSaida = dataHoraSaida ? moment.utc(dataHoraSaida) : moment.utc();
 
-        const diferencaEmMillis = dataSaida.getTime() - dataEntrada.getTime();
-        const diferencaEmHoras = diferencaEmMillis / (1000 * 60 * 60);
+        const diferencaEmHoras = moment.duration(dataSaida.diff(dataEntrada)).asHours();
 
         if (diferencaEmHoras < 0) {
             console.error("A data de saída é anterior à data de entrada.");
@@ -189,7 +153,7 @@ const TableCupom: React.FC = () => {
                     {cupons.map((cupom) => (
                         <tr key={cupom.id}>
                             <td>{cupom.id}</td>
-                            <td>{formatarData(cupom.dataHoraEntrada)}</td>
+                            <td>{formatarDataMoment(cupom.dataHoraEntrada)}</td>
                             <td>
                                 R$ {calcularValorTotal(
                                     cupom.dataHoraEntrada,
@@ -222,8 +186,8 @@ const TableCupom: React.FC = () => {
                             <p><strong>Placa:</strong> {cupomSelecionado.placa}</p>
                             <p><strong>Valor Total: R$ </strong> {calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.dataHoraSaida, cupomSelecionado.idTipoVeiculo).toFixed(2)}</p>
 
-                            <p><strong>Hora Entrada:</strong> {formatarData(cupomSelecionado.dataHoraEntrada)}</p>
-                            <p><strong>Hora Saída:</strong> {formatarHora(cupomSelecionado.dataHoraSaida)}</p>
+                            <p><strong>Hora Entrada:</strong> {formatarDataMoment(cupomSelecionado.dataHoraEntrada)}</p>
+                            <p><strong>Hora Saída:</strong> {cupomSelecionado.dataHoraSaida ? formatarDataMoment(cupomSelecionado.dataHoraSaida) : 'Ainda no estacionamento'}</p>
                         </div>
 
                         <div className="flex justify-end space-x-4 mt-6">
