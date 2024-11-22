@@ -28,27 +28,67 @@ const TableCupom: React.FC = () => {
     const fusoHorario = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
     console.log("Fuso Horário Configurado:", fusoHorario);
 
+    // Função genérica para criar um objeto Date com suporte ao UTC
+    const criarDataComUTC = (data: string): Date => {
+        if (!data.includes("Z")) {
+            return new Date(data + "Z"); // Adiciona 'Z' se não existir
+        }
+        return new Date(data);
+    };
+
+    // Ajuste para formatar datas com fuso horário configurado
+    const formatarData = (data: string): string => {
+        try {
+            const timeZone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
+            const dataObj = criarDataComUTC(data);
+            return dataObj.toLocaleString("pt-BR", {
+                timeZone,
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            });
+        } catch (error) {
+            console.error("Erro ao formatar data:", error);
+            return "Data Inválida";
+        }
+    };
+
+    // Ajuste para formatar horas com fuso horário configurado
+    const formatarHora = (hora: string | null): string => {
+        try {
+            const timeZone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
+            const horaObj = hora ? criarDataComUTC(hora) : new Date();
+            return horaObj.toLocaleTimeString("pt-BR", { timeZone });
+        } catch (error) {
+            console.error("Erro ao formatar hora:", error);
+            return "Hora Inválida";
+        }
+    };
+
+    const fetchCupons = async () => {
+        try {
+            const response = await fetch(apiUrls.cupons);
+            const data = await response.json();
+            setCupons(data.data);
+        } catch (error) {
+            console.error("Erro ao buscar cupons:", error);
+        }
+    };
+
+    const fetchTarifas = async () => {
+        try {
+            const response = await fetch("/api/tarifas");
+            const data = await response.json();
+            setTarifas(data.data);
+        } catch (error) {
+            console.error("Erro ao buscar tarifas:", error);
+        }
+    };
+
     useEffect(() => {
-        const fetchCupons = async () => {
-            try {
-                const response = await fetch(apiUrls.cupons);
-                const data = await response.json();
-                setCupons(data.data);
-            } catch (error) {
-                console.error("Erro ao buscar cupons:", error);
-            }
-        };
-
-        const fetchTarifas = async () => {
-            try {
-                const response = await fetch("/api/tarifas");
-                const data = await response.json();
-                setTarifas(data.data);
-            } catch (error) {
-                console.error("Erro ao buscar tarifas:", error);
-            }
-        };
-
         fetchCupons();
         fetchTarifas();
     }, []);
@@ -75,9 +115,8 @@ const TableCupom: React.FC = () => {
             return 0;
         }
 
-        // Ajustar datas ao fuso horário configurado
-        const dataEntrada = new Date(dataHoraEntrada);
-        const dataSaida = dataHoraSaida ? new Date(dataHoraSaida) : new Date();
+        const dataEntrada = criarDataComUTC(dataHoraEntrada);
+        const dataSaida = dataHoraSaida ? criarDataComUTC(dataHoraSaida) : new Date();
 
         const diferencaEmMillis = dataSaida.getTime() - dataEntrada.getTime();
         const diferencaEmHoras = diferencaEmMillis / (1000 * 60 * 60);
@@ -91,29 +130,6 @@ const TableCupom: React.FC = () => {
         return horasCobrar * valorTarifa;
     };
 
-    // Ajuste para formatar datas com fuso horário configurado
-    const formatarData = (data: string): string => {
-        const timeZone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo"; // Usar o fuso horário da variável
-        const dataObj = new Date(data);
-        return dataObj.toLocaleString("pt-BR", {
-            timeZone: timeZone, // Usando a variável para determinar o fuso horário
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-        });
-    };
-
-    const formatarHora = (hora: string | null): string => {
-        if (hora) {
-            const horaObj = new Date(hora);
-            return horaObj.toLocaleTimeString("pt-BR", { timeZone: fusoHorario });
-        }
-        return new Date().toLocaleTimeString("pt-BR", { timeZone: fusoHorario });
-    };
-
     const fecharModal = () => {
         setModalAberta(false);
         setCupomSelecionado(null);
@@ -125,11 +141,11 @@ const TableCupom: React.FC = () => {
         try {
             const valorTotal = calcularValorTotal(
                 cupomSelecionado.dataHoraEntrada,
-                new Date().toISOString(), // Hora de saída em UTC
+                new Date().toISOString(),
                 cupomSelecionado.idTipoVeiculo
             );
 
-            const dataSaidaISO = new Date().toISOString(); // Armazenar a hora de saída em UTC
+            const dataSaidaISO = new Date().toISOString();
 
             const resposta = await fetch(`/api/cupom?id=${cupomSelecionado.id}`, {
                 method: "PUT",
