@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import moment from "moment-timezone"; // Adicionado import
+import moment from "moment-timezone"; // Import para manipulação de datas
 import { apiUrls } from "../config/config";
 import styles from "../styles/Home.module.css";
 
+// Interfaces para os dados
 interface Cupom {
     id: number;
     dataHoraEntrada: string;
@@ -20,47 +21,54 @@ interface Tarifa {
     valor: number;
 }
 
-const TableCupom: React.FC = () => {
-    const [cupons, setCupons] = useState<Cupom[]>([]);
-    const [modalAberta, setModalAberta] = useState(false);
-    const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null);
-    const [tarifas, setTarifas] = useState<Tarifa[]>([]);
+const TabelaCupom: React.FC = () => {
+    // Estados da tabela e do modal
+    const [cupons, setCupons] = useState<Cupom[]>([]); // Lista de cupons
+    const [tarifas, setTarifas] = useState<Tarifa[]>([]); // Lista de tarifas
+    const [modalAberta, setModalAberta] = useState(false); // Controle do modal
+    const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null); // Cupom em foco no modal
 
     // Função para formatar datas usando moment-timezone
     const formatarDataMoment = (data: string): string => {
         return moment.utc(data).tz("America/Sao_Paulo").format("DD/MM/YYYY HH:mm:ss");
     };
 
-    // Fetch dos cupons
+    // Função para buscar cupons da API
     const fetchCupons = async () => {
         try {
-            const response = await fetch(apiUrls.cupons);
+            const response = await fetch(apiUrls.cupons); // Busca na API de cupons
+            if (!response.ok) throw new Error("Erro ao buscar cupons");
+
             const data = await response.json();
-            setCupons(data.data);
+            setCupons(data.data); // Atualiza a lista de cupons
         } catch (error) {
             console.error("Erro ao buscar cupons:", error);
         }
     };
 
-    // Fetch das tarifas
+    // Função para buscar tarifas da API
     const fetchTarifas = async () => {
         try {
-            const response = await fetch("/api/tarifas");
+            const response = await fetch("/api/tarifas"); // Busca na API de tarifas
+            if (!response.ok) throw new Error("Erro ao buscar tarifas");
+
             const data = await response.json();
-            setTarifas(data.data);
+            setTarifas(data.data); // Atualiza a lista de tarifas
         } catch (error) {
             console.error("Erro ao buscar tarifas:", error);
         }
     };
 
+    // useEffect para carregar os dados ao montar o componente
     useEffect(() => {
         fetchCupons();
         fetchTarifas();
     }, []);
 
+    // Função para abrir o modal ao liberar cupom
     const liberarCupom = (cupom: Cupom) => {
-        setCupomSelecionado(cupom);
-        setModalAberta(true);
+        setCupomSelecionado(cupom); // Define o cupom selecionado
+        setModalAberta(true); // Abre o modal
     };
 
     const obterTarifaPorTipoVeiculo = (idTipoVeiculo: string): number => {
@@ -211,4 +219,4 @@ const TableCupom: React.FC = () => {
     );
 };
 
-export default TableCupom;
+export default TabelaCupom;

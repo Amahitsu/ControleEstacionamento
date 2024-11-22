@@ -112,7 +112,8 @@ const TablePlaca: React.FC = () => {
       if (response.ok) {
         setPlacas((prevPlacas) =>
           prevPlacas.filter((placa) => placa.id !== id)
-        );
+      );
+      window.location.reload();
         console.log("Placa excluída com sucesso.");
       } else {
         console.error("Erro ao excluir placa:", await response.json());
