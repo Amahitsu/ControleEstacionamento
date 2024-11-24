@@ -111,17 +111,24 @@ const TabelaCupom: React.FC = () => {
         return formatarDataMoment(new Date().toISOString());
     }
 
+    const obterHorarioLocal = () => {
+        const agora = new Date();
+        const offset = agora.getTimezoneOffset() * 60000; // Offset em milissegundos
+        const horarioLocal = new Date(agora.getTime() - offset);
+        return horarioLocal.toISOString().slice(0, 19).replace("T", " ");
+    };
+
     const liberarCupomNoBanco = async () => {
         if (!cupomSelecionado) return;
 
+        const dataHoraSaida = obterHorarioLocal()
+        debugger
         try {
             const valorTotal = calcularValorTotal(
                 cupomSelecionado.dataHoraEntrada,
                 new Date().toISOString(),
                 cupomSelecionado.idTipoVeiculo
             );
-
-            const dataSaidaISO = new Date().toISOString();
 
             const resposta = await fetch(`/api/cupom?id=${cupomSelecionado.id}`, {
                 method: "PUT",
@@ -130,7 +137,7 @@ const TabelaCupom: React.FC = () => {
                 },
                 body: JSON.stringify({
                     valorTotal: valorTotal,
-                    dataHoraSaida: dataSaidaISO,
+                    dataHoraSaida: dataHoraSaida,
                 }),
             });
 
