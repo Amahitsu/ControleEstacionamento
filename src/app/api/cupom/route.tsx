@@ -69,7 +69,18 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 }
 
-
+export async function POST(request: Request): Promise<NextResponse> {
+  try {
+    const { placaID, dataHoraEntrada } = await request.json(); // Extrai os dados do corpo da requisição
+    const { rows } = await sql`
+      INSERT INTO cupom ("dataHoraEntrada", "placaID")
+      VALUES (${dataHoraEntrada}, ${placaID})
+      RETURNING *;`; // Retorna todos os campos do novo registro
+    return NextResponse.json({ data: rows[0] }, { status: 201 }); // Retorna o registro inserido
+  } catch (error) {
+    return NextResponse.json({ error: error }, { status: 500 });
+  }
+}
 
 export async function DELETE(request: Request): Promise<NextResponse> {
   try {
