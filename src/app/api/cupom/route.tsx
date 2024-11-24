@@ -82,6 +82,50 @@ export async function POST(request: Request): Promise<NextResponse> {
   }
 }
 
+export async function PUT(request: NextRequest): Promise<NextResponse> {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ message: "ID não fornecido." }, { status: 400 });
+    }
+
+    const { dataHoraSaida, valorTotal } = await request.json();
+
+    if (!dataHoraSaida || valorTotal === undefined) {
+      return NextResponse.json(
+        { message: "Campos obrigatórios faltando." },
+        { status: 400 }
+      );
+    }
+
+    const { rows } = await sql`
+      UPDATE "cupom"
+      SET "dataHoraSaida" = ${dataHoraSaida}, "valorTotal" = ${valorTotal}
+      WHERE id = ${id}
+      RETURNING *;
+    `;
+
+    if (rows.length === 0) {
+      return NextResponse.json(
+        { message: "Cupom não encontrado para o ID fornecido." },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ data: rows[0] }, { status: 200 });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Erro desconhecido.";
+    return NextResponse.json(
+      { message: errorMessage },
+      { status: 500 }
+    );
+  }
+}
+
+
 export async function DELETE(request: Request): Promise<NextResponse> {
   try {
     const { id } = await request.json(); // Lendo o ID do corpo da requisição

@@ -107,13 +107,14 @@ const TablePlaca: React.FC = () => {
   const excluirPlaca = async (id: number) => {
     try {
       const response = await fetch(`/api/placa?id=${id}`, {
-        method: "DELETE",
+        method: "DELETE"
       });
+
       if (response.ok) {
         setPlacas((prevPlacas) =>
           prevPlacas.filter((placa) => placa.id !== id)
-      );
-      window.location.reload();
+        );
+        window.location.reload();
         console.log("Placa excluída com sucesso.");
       } else {
         console.error("Erro ao excluir placa:", await response.json());

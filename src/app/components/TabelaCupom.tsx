@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import moment from "moment-timezone"; // Import para manipulação de datas
+import React, { useEffect, useState } from "react";
 import { apiUrls } from "../config/config";
 import styles from "../styles/Home.module.css";
 
@@ -107,6 +107,10 @@ const TabelaCupom: React.FC = () => {
         setCupomSelecionado(null);
     };
 
+    const buscarHoraSaida = () => {
+        return formatarDataMoment(new Date().toISOString());
+    }
+
     const liberarCupomNoBanco = async () => {
         if (!cupomSelecionado) return;
 
@@ -135,6 +139,7 @@ const TabelaCupom: React.FC = () => {
             if (resposta.ok) {
                 console.log("Data de saída e valor total atualizados:", data);
                 fecharModal();
+                window.location.reload();
             } else {
                 console.error("Erro ao atualizar dataHoraSaida e valor total:", data.message);
             }
@@ -187,7 +192,7 @@ const TabelaCupom: React.FC = () => {
 
             {modalAberta && cupomSelecionado && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-2/5">
                         <h2 className="text-lg font-bold mb-4">Cupom {cupomSelecionado.id}</h2>
 
                         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -195,7 +200,7 @@ const TabelaCupom: React.FC = () => {
                             <p><strong>Valor Total: R$ </strong> {calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.dataHoraSaida, cupomSelecionado.idTipoVeiculo).toFixed(2)}</p>
 
                             <p><strong>Hora Entrada:</strong> {formatarDataMoment(cupomSelecionado.dataHoraEntrada)}</p>
-                            <p><strong>Hora Saída:</strong> {cupomSelecionado.dataHoraSaida ? formatarDataMoment(cupomSelecionado.dataHoraSaida) : 'Ainda no estacionamento'}</p>
+                            <p><strong>Hora Saída:</strong> {buscarHoraSaida()}</p>
                         </div>
 
                         <div className="flex justify-end space-x-4 mt-6">
