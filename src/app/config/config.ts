@@ -7,10 +7,9 @@ const baseApiUrl =
 
 export const apiUrls = {
   cupons: `${baseApiUrl}/cupom`,
+  historico: `${baseApiUrl}/historico`,
   modelos: `${baseApiUrl}/modelo`,
   tipoVeiculo: `${baseApiUrl}/tipoVeiculo`,
   placas: `${baseApiUrl}/placa`,
   tarifas: `${baseApiUrl}/tarifas`
-
-  // Adicione outros endpoints conforme necessário
 };
