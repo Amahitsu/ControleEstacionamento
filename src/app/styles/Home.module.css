@@ -138,3 +138,23 @@
     background-color: #28a745;
   }
   
+  /* Estilos para o botão "Liberar" */
+.liberarButton {
+    padding: 10px 20px;
+    background-color: #28a745; /* Verde para o botão "Liberar" */
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.liberarButton:hover {
+    background-color: #218838; /* Tom de verde mais escuro ao passar o mouse */
+}
+
+.liberarButton:disabled {
+    background-color: #c6c6c6; /* Cor para o botão desabilitado */
+    cursor: not-allowed;
+}
