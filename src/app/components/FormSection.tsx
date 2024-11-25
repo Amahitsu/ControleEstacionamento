@@ -3,9 +3,16 @@
 import { useState } from "react";
 import styles from "../styles/Home.module.css";
 
+interface Resultado {
+    placa: string;
+    modelo: string;
+    tipoVeiculo: string;
+    dataHoraEntrada: string;
+}
+
 const FormSection: React.FC = () => {
     const [placa, setPlaca] = useState("");
-    const [resultado, setResultado] = useState<any>(null); // Estado para armazenar o resultado da busca
+    const [resultado, setResultado] = useState<Resultado | null>(null); // Estado para armazenar o resultado da busca
     const [erro, setErro] = useState<string | null>(null); // Estado para mensagens de erro
 
     // Função para buscar a placa
