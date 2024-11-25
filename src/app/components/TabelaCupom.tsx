@@ -122,7 +122,6 @@ const TabelaCupom: React.FC = () => {
         if (!cupomSelecionado) return;
 
         const dataHoraSaida = obterHorarioLocal()
-        debugger
         try {
             const valorTotal = calcularValorTotal(
                 cupomSelecionado.dataHoraEntrada,

@@ -211,7 +211,7 @@ const TablePlaca: React.FC = () => {
             <h2 className="text-xl font-semibold mb-4">Veículo estacionado com sucesso!</h2>
             <button
               onClick={() => setModalAberta(false)}
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700"
             >
               Fechar
             </button>
