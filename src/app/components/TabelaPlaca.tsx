@@ -140,7 +140,7 @@ const TablePlaca: React.FC = () => {
       });
 
       if (response.ok) {
-        setModalAberta(true); // Abre a modal
+        setModalAberta(true); 
         const placaEstacionada = placas.find((placa) => placa.id === id)?.placa;
         if (placaEstacionada) {
           setCuponsAtivos((prev) => [...prev, placaEstacionada]); // Adiciona a placa à lista de cupons ativos
@@ -201,23 +201,24 @@ const TablePlaca: React.FC = () => {
       {/* Modal */}
       {modalAberta && (
         <div
-          className="modal-overlay"
-          onClick={() => setModalAberta(false)} // Fecha ao clicar fora da modal
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          onClick={() => setModalAberta(false)}
         >
           <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()} // Evita fechar ao clicar na modal
+            className="bg-white p-6 rounded-lg shadow-lg w-96"
+            onClick={(e) => e.stopPropagation()}
           >
-            <h2>Veículo estacionado com sucesso!</h2>
+            <h2 className="text-xl font-semibold mb-4">Veículo estacionado com sucesso!</h2>
             <button
               onClick={() => setModalAberta(false)}
-              className="close-button"
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
               Fechar
             </button>
           </div>
         </div>
       )}
+
     </div>
   );
 };
