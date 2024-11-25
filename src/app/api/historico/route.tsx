@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     // Obter o parâmetro "placa" da URL
-    //const { searchParams } = new URL(req.url);
+    const {} = new URL(req.url);
 
     // Se o parâmetro "placa" foi fornecido, adicionar a cláusula WHERE com segurança
     const result = await sql`
