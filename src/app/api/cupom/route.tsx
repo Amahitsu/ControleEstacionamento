@@ -3,58 +3,86 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
-    // Obter o parâmetro "placa" da URL
     const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
     const placa = searchParams.get("placa");
 
-    // Se o parâmetro "placa" foi fornecido, adicionar a cláusula WHERE com segurança
-    const result = placa
-      ? await sql`
-          SELECT 
-              c.id AS "id",
-              c."dataHoraEntrada",
-              c."dataHoraSaida",
-              p."placa" AS "placa",
-              tv."id" AS "idTipoVeiculo",
-              tv."veiculo" AS "tipoVeiculo",
-              m."nomeModelo" AS "modelo"
-          FROM 
-              "cupom" c
-          JOIN 
-              "placa" p ON p.id = c."placaID"
-          JOIN 
-              "tipoVeiculo" tv ON tv.id = p."tipoVeiculoId"
-          JOIN
-              "modelo" m ON m.id = p."modeloId"
-          WHERE
-              c."dataHoraSaida" IS NULL
-              AND p."placa" = ${placa};
-        `
-      : await sql`
-          SELECT 
-              c.id AS "id",
-              c."dataHoraEntrada",
-              c."dataHoraSaida",
-              p."placa" AS "placa",
-              tv."id" AS "idTipoVeiculo",
-              tv."veiculo" AS "tipoVeiculo",
-              m."nomeModelo" AS "modelo"
-          FROM 
-              "cupom" c
-          JOIN 
-              "placa" p ON p.id = c."placaID"
-          JOIN 
-              "tipoVeiculo" tv ON tv.id = p."tipoVeiculoId"
-          JOIN
-              "modelo" m ON m.id = p."modeloId"
-          WHERE
-              c."dataHoraSaida" IS NULL;
-        `;
+    // Define consulta SQL com base nos parâmetros fornecidos
+    let result;
 
-    // Acessar `rows` do resultado e verificar se há registros
+    if (id) {
+      // Consulta por ID
+      result = await sql`
+        SELECT 
+            c.id AS "id",
+            c."dataHoraEntrada",
+            c."dataHoraSaida",
+            p."placa" AS "placa",
+            tv."id" AS "idTipoVeiculo",
+            tv."veiculo" AS "tipoVeiculo",
+            m."nomeModelo" AS "modelo"
+        FROM 
+            "cupom" c
+        JOIN 
+            "placa" p ON p.id = c."placaID"
+        JOIN 
+            "tipoVeiculo" tv ON tv.id = p."tipoVeiculoId"
+        JOIN
+            "modelo" m ON m.id = p."modeloId"
+        WHERE
+            c.id = ${id};
+      `;
+    } else if (placa) {
+      // Consulta por placa
+      result = await sql`
+        SELECT 
+            c.id AS "id",
+            c."dataHoraEntrada",
+            c."dataHoraSaida",
+            p."placa" AS "placa",
+            tv."id" AS "idTipoVeiculo",
+            tv."veiculo" AS "tipoVeiculo",
+            m."nomeModelo" AS "modelo"
+        FROM 
+            "cupom" c
+        JOIN 
+            "placa" p ON p.id = c."placaID"
+        JOIN 
+            "tipoVeiculo" tv ON tv.id = p."tipoVeiculoId"
+        JOIN
+            "modelo" m ON m.id = p."modeloId"
+        WHERE
+            c."dataHoraSaida" IS NULL
+            AND p."placa" = ${placa};
+      `;
+    } else {
+      // Consulta geral
+      result = await sql`
+        SELECT 
+            c.id AS "id",
+            c."dataHoraEntrada",
+            c."dataHoraSaida",
+            p."placa" AS "placa",
+            tv."id" AS "idTipoVeiculo",
+            tv."veiculo" AS "tipoVeiculo",
+            m."nomeModelo" AS "modelo"
+        FROM 
+            "cupom" c
+        JOIN 
+            "placa" p ON p.id = c."placaID"
+        JOIN 
+            "tipoVeiculo" tv ON tv.id = p."tipoVeiculoId"
+        JOIN
+            "modelo" m ON m.id = p."modeloId"
+        WHERE
+            c."dataHoraSaida" IS NULL;
+      `;
+    }
+
+    // Verifica se há registros
     if (result.rows.length === 0) {
       return NextResponse.json(
-        { message: "Nenhum registro encontrado para a placa especificada." },
+        { message: "Nenhum registro encontrado." },
         { status: 404 }
       );
     }
@@ -71,14 +99,19 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
-    const { placaID, dataHoraEntrada } = await request.json(); // Extrai os dados do corpo da requisição
+    const { placaID, dataHoraEntrada } = await request.json();
     const { rows } = await sql`
-      INSERT INTO cupom ("dataHoraEntrada", "placaID")
+      INSERT INTO "cupom" ("dataHoraEntrada", "placaID")
       VALUES (${dataHoraEntrada}, ${placaID})
-      RETURNING *;`; // Retorna todos os campos do novo registro
-    return NextResponse.json({ data: rows[0] }, { status: 201 }); // Retorna o registro inserido
+      RETURNING *;
+    `;
+    return NextResponse.json({ data: rows[0] }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 });
+    console.error("Erro no POST:", error);
+    return NextResponse.json(
+      { error: "Erro ao criar o cupom." },
+      { status: 500 }
+    );
   }
 }
 
@@ -88,7 +121,10 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json({ message: "ID não fornecido." }, { status: 400 });
+      return NextResponse.json(
+        { message: "ID não fornecido." },
+        { status: 400 }
+      );
     }
 
     const { dataHoraSaida, valorTotal } = await request.json();
@@ -109,50 +145,52 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
 
     if (rows.length === 0) {
       return NextResponse.json(
-        { message: "Cupom não encontrado para o ID fornecido." },
+        { message: "Cupom não encontrado." },
         { status: 404 }
       );
     }
 
     return NextResponse.json({ data: rows[0] }, { status: 200 });
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Erro desconhecido.";
+  } catch (error) {
+    console.error("Erro no PUT:", error);
     return NextResponse.json(
-      { message: errorMessage },
+      { error: "Erro ao atualizar o cupom." },
       { status: 500 }
     );
   }
 }
 
-
 export async function DELETE(request: Request): Promise<NextResponse> {
   try {
-    const { id } = await request.json(); // Lendo o ID do corpo da requisição
+    const { id } = await request.json();
 
-    // Executando o DELETE
+    if (!id) {
+      return NextResponse.json(
+        { message: "ID não fornecido." },
+        { status: 400 }
+      );
+    }
+
     const result = await sql`
       DELETE FROM "cupom"
-      WHERE id = ${id}
+      WHERE id = ${id};
     `;
 
-    // Se result não tem rowCount, pode simplesmente verificar se houve erro
-    if (result?.rowCount && result.rowCount > 0) {
+    if (result.rowCount === 0) {
       return NextResponse.json(
-        { message: "Cupom deletado com sucesso!" },
-        { status: 200 }
-      );
-    } else {
-      return NextResponse.json(
-        { message: "Cupom não encontrado" },
+        { message: "Cupom não encontrado." },
         { status: 404 }
       );
     }
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Erro desconhecido";
+
     return NextResponse.json(
-      { message: "Erro ao deletar o cupom", error: errorMessage },
+      { message: "Cupom deletado com sucesso!" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Erro no DELETE:", error);
+    return NextResponse.json(
+      { error: "Erro ao deletar o cupom." },
       { status: 500 }
     );
   }

@@ -158,3 +158,27 @@
     background-color: #c6c6c6; /* Cor para o botão desabilitado */
     cursor: not-allowed;
 }
+
+.buttonGroup {
+    display: flex;
+    gap: 10px; /* Espaço entre os botões */
+    margin-top: 10px;
+}
+
+.liberarButton {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancelarButton {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
