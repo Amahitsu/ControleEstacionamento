@@ -11,7 +11,9 @@ const FormSection: React.FC = () => {
   const [color, setColor] = useState("");
   const [modelos, setModelos] = useState<{ nomeModelo: string }[]>([]);
   const [tiposVeiculo, setTiposVeiculo] = useState<{ veiculo: string }[]>([]);
-  const [modalAberta, setModalAberta] = useState(false); // Estado para controlar a modal
+  const [modalAberta, setModalAberta] = useState(false); // Modal de sucesso
+  const [modalErroAberta, setModalErroAberta] = useState(false); // Modal de erro
+  const [mensagemErro, setMensagemErro] = useState(""); // Mensagem para a modal de erro
 
   useEffect(() => {
     const fetchModelos = async () => {
@@ -20,8 +22,6 @@ const FormSection: React.FC = () => {
         if (!response.ok) throw new Error("Erro ao buscar modelos");
 
         const data = await response.json();
-        console.log("Modelos recebidos:", data);
-
         if (Array.isArray(data.data)) {
           setModelos(data.data);
         } else {
@@ -40,8 +40,6 @@ const FormSection: React.FC = () => {
         if (!response.ok) throw new Error("Erro ao buscar tipos de veículos");
 
         const data = await response.json();
-        console.log("Tipos de veículos recebidos:", data);
-
         if (Array.isArray(data.data)) {
           setTiposVeiculo(data.data);
         } else {
@@ -60,11 +58,32 @@ const FormSection: React.FC = () => {
 
   const handleAddCar = async () => {
     if (!placa || !tipoVeiculo || !modelo || !color) {
-      alert("Por favor, preencha todos os campos.");
+      setMensagemErro("Por favor, preencha todos os campos.");
+      setModalErroAberta(true);
       return;
     }
 
     try {
+      // Verifica se a placa já existe
+      const responseCheck = await fetch(`${apiUrls.placas}?placa=${placa}`);
+      if (!responseCheck.ok) {
+        throw new Error("Erro ao verificar a existência da placa");
+      }
+
+      const dataCheck = await responseCheck.json();
+      console.log("Resultado da verificação:", dataCheck);
+
+      // Valida se a placa já existe
+      const placaExistente =
+        dataCheck?.data && Array.isArray(dataCheck.data) && dataCheck.data.some((carro: any) => carro.placa === placa);
+
+      if (placaExistente) {
+        setMensagemErro("A placa já está cadastrada. Por favor, insira outra.");
+        setModalErroAberta(true);
+        return;
+      }
+
+      // Adiciona o veículo se a placa não existir
       const response = await fetch(apiUrls.placas, {
         headers: {
           "Content-Type": "application/json",
@@ -78,17 +97,11 @@ const FormSection: React.FC = () => {
         }),
       });
 
-      console.log("Dados a serem enviados:", {
-        placa,
-        modeloId: modelo,
-        tipoVeiculoId: tipoVeiculo,
-        cor: color,
-      });
-
       if (!response.ok) throw new Error("Erro ao adicionar o veículo");
 
       const newCar = await response.json();
       console.log("Veículo adicionado:", newCar);
+
       setModalAberta(true); // Abre a modal de sucesso
 
       // Limpa os campos do formulário após o sucesso
@@ -98,7 +111,8 @@ const FormSection: React.FC = () => {
       setColor("");
     } catch (error) {
       console.error(error);
-      alert("Não foi possível adicionar o carro");
+      setMensagemErro("Não foi possível adicionar o carro.");
+      setModalErroAberta(true);
     }
   };
 
@@ -163,23 +177,33 @@ const FormSection: React.FC = () => {
 
       {/* Modal de Sucesso */}
       {modalAberta && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-          onClick={() => setModalAberta(false)} // Fecha a modal ao clicar fora
-        >
-          <div
-            className="bg-white p-6 rounded-lg shadow-lg w-96"
-            onClick={(e) => e.stopPropagation()} // Impede o fechamento ao clicar no conteúdo da modal
-          >
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 className="text-xl font-semibold mb-4">
               Veículo Adicionado com Sucesso!
             </h2>
             <button
               onClick={() => {
-                setModalAberta(false); // Fecha a modal
-                window.location.reload(); // Recarrega a página
+                setModalAberta(false);
+                window.location.reload();
               }}
               className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Erro */}
+      {modalErroAberta && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4 text-red-500">Erro</h2>
+            <p className="mb-4">{mensagemErro}</p>
+            <button
+              onClick={() => setModalErroAberta(false)}
+              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
             >
               Fechar
             </button>
