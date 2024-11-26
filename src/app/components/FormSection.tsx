@@ -2,7 +2,7 @@
 
 import moment from "moment-timezone"; // Import para manipulação de datas
 import { useState, useEffect } from "react";
-import { apiUrls } from "../config/config";
+//import { apiUrls } from "../config/config";
 import styles from "../styles/Home.module.css";
 
 // Interfaces para os dados
