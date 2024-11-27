@@ -10,9 +10,11 @@
       }
     ],
     "functions": {
-      "api/your-function.js": {
+      "api/*.ts": {
         "region": "gru1"  
-      }
+      },
+      "api/*.tsx": {
+        "region": "gru1"  
     }
   }
-  
+}
