@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { apiUrls } from "../config/config";
-import styles from "../styles/Home.module.css";
+// import styles from "../styles/Home.module.css";
 
 interface Placa {
   id: number;

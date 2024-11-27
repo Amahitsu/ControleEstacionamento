@@ -15,6 +15,10 @@ const FormSection: React.FC = () => {
   const [modalErroAberta, setModalErroAberta] = useState(false); // Modal de erro
   const [mensagemErro, setMensagemErro] = useState(""); // Mensagem para a modal de erro
 
+  interface Carro {
+    placa: string;
+  }
+
   useEffect(() => {
     const fetchModelos = async () => {
       try {
@@ -77,7 +81,7 @@ const FormSection: React.FC = () => {
 
       // Valida se a placa já existe
       const placaExistente =
-        dataCheck?.data && Array.isArray(dataCheck.data) && dataCheck.data.some((carro: any) => carro.placa === placaMaiuscula);
+        dataCheck?.data && Array.isArray(dataCheck.data) && dataCheck.data.some((carro: Carro) => carro.placa === placaMaiuscula);
 
       if (placaExistente) {
         setMensagemErro("A placa já está cadastrada. Por favor, insira outra.");
