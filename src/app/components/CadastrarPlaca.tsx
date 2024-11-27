@@ -64,8 +64,10 @@ const FormSection: React.FC = () => {
     }
 
     try {
+      const placaMaiuscula = placa.toUpperCase(); // Convertendo a placa para maiúscula
+
       // Verifica se a placa já existe
-      const responseCheck = await fetch(`${apiUrls.placas}?placa=${placa}`);
+      const responseCheck = await fetch(`${apiUrls.placas}?placa=${placaMaiuscula}`);
       if (!responseCheck.ok) {
         throw new Error("Erro ao verificar a existência da placa");
       }
@@ -75,7 +77,7 @@ const FormSection: React.FC = () => {
 
       // Valida se a placa já existe
       const placaExistente =
-        dataCheck?.data && Array.isArray(dataCheck.data) && dataCheck.data.some((carro: any) => carro.placa === placa);
+        dataCheck?.data && Array.isArray(dataCheck.data) && dataCheck.data.some((carro: any) => carro.placa === placaMaiuscula);
 
       if (placaExistente) {
         setMensagemErro("A placa já está cadastrada. Por favor, insira outra.");
@@ -90,7 +92,7 @@ const FormSection: React.FC = () => {
         },
         method: "POST",
         body: JSON.stringify({
-          placa,
+          placa: placaMaiuscula, // Enviando a placa em maiúsculas
           modeloId: modelo,
           tipoVeiculoId: tipoVeiculo,
           cor: color,
@@ -122,7 +124,7 @@ const FormSection: React.FC = () => {
         type="text"
         placeholder="Placa"
         value={placa}
-        onChange={(e) => setPlaca(e.target.value)}
+        onChange={(e) => setPlaca(e.target.value.toUpperCase())} // Convertendo para maiúsculas enquanto digita
         maxLength={7}
       />
       <select
