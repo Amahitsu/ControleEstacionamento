@@ -33,8 +33,11 @@ const TablePlaca: React.FC = () => {
   const [placas, setPlacas] = useState<Placa[]>([]);
   const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
   const [modelos, setModelos] = useState<Modelo[]>([]);
-  const [cuponsAtivos, setCuponsAtivos] = useState<string[]>([]); // Placas atualmente estacionadas
+  const [cuponsAtivos, setCuponsAtivos] = useState<string[]>([]);
   const [modalAberta, setModalAberta] = useState(false);
+  const [modalMensagem, setModalMensagem] = useState<string | null>(null);
+  const [placaBusca, setPlacaBusca] = useState<string>(""); 
+  const [resultadoBusca, setResultadoBusca] = useState<Placa[]>([]);
 
   useEffect(() => {
     const fetchPlacas = async () => {
@@ -71,7 +74,6 @@ const TablePlaca: React.FC = () => {
       try {
         const response = await fetch(apiUrls.cupons);
         const data = await response.json();
-        // Filtra placas que estão atualmente estacionadas (sem dataHoraSaida)
         const placasEstacionadas = data.data
           .filter((cupom: Cupom) => !cupom.dataHoraSaida)
           .map((cupom: Cupom) => cupom.placa);
@@ -97,36 +99,34 @@ const TablePlaca: React.FC = () => {
     return modelo ? modelo.nomeModelo : "Desconhecido";
   };
 
-  const obterHorarioLocal = () => {
+  const ajustarHorario = () => {
     const agora = new Date();
-    const offset = agora.getTimezoneOffset() * 60000; // Offset em milissegundos
-    const horarioLocal = new Date(agora.getTime() - offset);
-    return horarioLocal.toISOString().slice(0, 19).replace("T", " ");
+    agora.setHours(agora.getHours() - 3);
+    return agora.toISOString().slice(0, 19).replace("T", " ");
   };
 
-  const excluirPlaca = async (id: number) => {
-    try {
-      const response = await fetch(`/api/placa?id=${id}`, {
-        method: "DELETE"
-      });
+  const buscarPlaca = () => {
+    const resultado = placas.filter((placa) =>
+      placa.placa.toLowerCase().includes(placaBusca.toLowerCase())
+    );
+    setResultadoBusca(resultado);
+  };
 
-      if (response.ok) {
-        setPlacas((prevPlacas) =>
-          prevPlacas.filter((placa) => placa.id !== id)
-        );
-        window.location.reload();
-        console.log("Placa excluída com sucesso.");
-      } else {
-        console.error("Erro ao excluir placa:", await response.json());
-      }
-    } catch (error) {
-      console.error("Erro ao fazer requisição de exclusão:", error);
-    }
+  const limparBusca = () => {
+    setPlacaBusca("");
+    setResultadoBusca([]);  // Limpa os resultados da busca
   };
 
   const estacionarPlaca = async (id: number) => {
+    const placa = placas.find((placa) => placa.id === id);
+
+    if (placa && cuponsAtivos.includes(placa.placa)) {
+      alert("Este veículo já está estacionado.");
+      return;
+    }
+
     try {
-      const dataHoraEntrada = obterHorarioLocal();
+      const dataHoraEntrada = ajustarHorario();
 
       const response = await fetch(apiUrls.cupons, {
         headers: {
@@ -140,11 +140,12 @@ const TablePlaca: React.FC = () => {
       });
 
       if (response.ok) {
-        setModalAberta(true); 
         const placaEstacionada = placas.find((placa) => placa.id === id)?.placa;
         if (placaEstacionada) {
-          setCuponsAtivos((prev) => [...prev, placaEstacionada]); // Adiciona a placa à lista de cupons ativos
+          setCuponsAtivos((prev) => [...prev, placaEstacionada]);
         }
+        setModalMensagem("Veículo estacionado com sucesso!");
+        setModalAberta(true);
       } else {
         throw new Error("Erro ao estacionar veículo");
       }
@@ -154,70 +155,146 @@ const TablePlaca: React.FC = () => {
     }
   };
 
+  const excluirPlaca = async (id: number) => {
+    try {
+      const response = await fetch(`/api/placa?id=${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setPlacas((prevPlacas) =>
+          prevPlacas.filter((placa) => placa.id !== id)
+        );
+        setModalMensagem("Placa excluída com sucesso!");
+        setModalAberta(true);
+      } else {
+        throw new Error("Erro ao excluir placa.");
+      }
+    } catch (error) {
+      console.error("Erro ao excluir placa:", error);
+      alert("Erro ao excluir placa.");
+    }
+  };
+
   return (
-    <div className={styles.tableSection}>
-      <table>
+    <div className="relative p-4">
+      <div className="flex justify-end mb-4">
+        <input
+          type="text"
+          className="border border-gray-300 rounded-md px-2 py-1 mr-2 w-full max-w-[300px]" // Ajuste para o input ocupar o mesmo espaço da tabela
+          placeholder="Buscar placa"
+          value={placaBusca}
+          onChange={(e) => setPlacaBusca(e.target.value)}
+        />
+        <button
+          onClick={buscarPlaca}
+          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-600"
+        >
+          Buscar
+        </button>
+        <button
+          onClick={limparBusca}
+          className="bg-gray-500 text-white px-4 py-2 rounded-md ml-2 hover:bg-gray-700"
+        >
+          Limpar busca
+        </button>
+      </div>
+
+      <table className="table-auto w-full border border-gray-300">
         <thead>
-          <tr className={styles.tableHeader}>
-            <th>Placa</th>
-            <th>Tipo</th>
-            <th>Modelo</th>
-            <th>Cor</th>
-            <th>Ações</th>
+          <tr className="bg-gray-100">
+            <th className="px-4 py-2">Placa</th>
+            <th className="px-4 py-2">Tipo</th>
+            <th className="px-4 py-2">Modelo</th>
+            <th className="px-4 py-2">Cor</th>
+            <th className="px-4 py-2">Ações</th>
           </tr>
         </thead>
         <tbody>
-          {placas.map((placa) => (
-            <tr key={placa.id}>
-              <td>{placa.placa}</td>
-              <td>{obterNomeTipoVeiculo(placa.tipoVeiculoId)}</td>
-              <td>{obterNomeModelo(placa.modeloId)}</td>
-              <td>{placa.cor}</td>
-              <td>
-                <button
-                  className="text-teal-600 underline decoration-1 pr-3"
-                  onClick={() => estacionarPlaca(placa.id)}
-                  disabled={cuponsAtivos.includes(placa.placa)} // Desabilita se o veículo já estiver estacionado
-                  title={
-                    cuponsAtivos.includes(placa.placa)
-                      ? "Veículo já estacionado"
-                      : "Estacionar veículo"
-                  }
-                >
-                  Estacionar
-                </button>
-                <button
-                  className="text-teal-600 underline decoration-1"
-                  onClick={() => excluirPlaca(placa.id)}
-                >
-                  Excluir
-                </button>
-              </td>
-            </tr>
-          ))}
+          {resultadoBusca.length > 0 ? (
+            resultadoBusca.map((placa) => (
+              <tr key={placa.id} className="border-t border-gray-300">
+                <td className="px-4 py-2">{placa.placa}</td>
+                <td className="px-4 py-2">{obterNomeTipoVeiculo(placa.tipoVeiculoId)}</td>
+                <td className="px-4 py-2">{obterNomeModelo(placa.modeloId)}</td>
+                <td className="px-4 py-2">{placa.cor}</td>
+                <td className="px-4 py-2 flex gap-4">
+                  <button
+                    onClick={() => estacionarPlaca(placa.id)}
+                    disabled={cuponsAtivos.includes(placa.placa)}
+                    className={`${
+                      cuponsAtivos.includes(placa.placa)
+                        ? "text-gray-500 cursor-not-allowed"
+                        : "text-blue-600 underline"
+                    }`}
+                    title={
+                      cuponsAtivos.includes(placa.placa)
+                        ? "Este veículo já está estacionado."
+                        : "Estacionar veículo"
+                    }
+                  >
+                    Estacionar
+                  </button>
+                  <button
+                    onClick={() => excluirPlaca(placa.id)}
+                    className="text-red-600 underline"
+                  >
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            placas.map((placa) => (
+              <tr key={placa.id} className="border-t border-gray-300">
+                <td className="px-4 py-2">{placa.placa}</td>
+                <td className="px-4 py-2">{obterNomeTipoVeiculo(placa.tipoVeiculoId)}</td>
+                <td className="px-4 py-2">{obterNomeModelo(placa.modeloId)}</td>
+                <td className="px-4 py-2">{placa.cor}</td>
+                <td className="px-4 py-2 flex gap-4">
+                  <button
+                    onClick={() => estacionarPlaca(placa.id)}
+                    disabled={cuponsAtivos.includes(placa.placa)}
+                    className={`${
+                      cuponsAtivos.includes(placa.placa)
+                        ? "text-gray-500 cursor-not-allowed"
+                        : "text-blue-600 underline"
+                    }`}
+                    title={
+                      cuponsAtivos.includes(placa.placa)
+                        ? "Este veículo já está estacionado."
+                        : "Estacionar veículo"
+                    }
+                  >
+                    Estacionar
+                  </button>
+                  <button
+                    onClick={() => excluirPlaca(placa.id)}
+                    className="text-red-600 underline"
+                  >
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
 
-      {/* Modal */}
-      {modalAberta && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-          onClick={() => setModalAberta(false)}
-        >
-          <div
-            className="bg-white p-6 rounded-lg shadow-lg w-96"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-xl font-semibold mb-4">Veículo estacionado com sucesso!</h2>
-            <button
-              onClick={() => setModalAberta(false)}
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700"
-            >
-              Fechar
-            </button>
+      {/* Modal Sucesso */}
+        {modalAberta && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+              <h2 className="text-xl font-semibold mb-4">{modalMensagem}</h2>
+              <button
+                onClick={() => setModalAberta(false)}
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-600"
+              >
+                Fechar
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
     </div>
   );
