@@ -28,18 +28,18 @@ interface Cupom {
   placa: string;
 }
 
-interface Comprovante {
+interface ComprovanteProps {
   placa: string;
   tipoVeiculo: string;
   modelo: string;
   cor: string;
-  dataHoraEntrada: string;
+  dataHoraEntrada: string; // Ou Date, dependendo de como você está passando
   idCupom: number;
 }
 
-const Comprovante = ({ placa, tipoVeiculo, modelo, cor, dataHoraEntrada, idCupom }) => {
+const Comprovante: React.FC<ComprovanteProps> = ({ placa, tipoVeiculo, modelo, cor, dataHoraEntrada, idCupom }) => {
   // Função para formatar a data e hora
-  const formatarDataHora = (dataHora) => {
+  const formatarDataHora = (dataHora: string) => {
     const data = new Date(dataHora);
     const dia = String(data.getDate()).padStart(2, '0');
     const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês começa do zero
@@ -62,7 +62,6 @@ const Comprovante = ({ placa, tipoVeiculo, modelo, cor, dataHoraEntrada, idCupom
   );
 };
 
-
 const TablePlaca: React.FC = () => {
   const [placas, setPlacas] = useState<Placa[]>([]);
   const [tiposVeiculo, setTiposVeiculo] = useState<TipoVeiculo[]>([]);
@@ -72,7 +71,7 @@ const TablePlaca: React.FC = () => {
   const [modalMensagem, setModalMensagem] = useState<string | null>(null);
   const [placaBusca, setPlacaBusca] = useState<string>("");
   const [resultadoBusca, setResultadoBusca] = useState<Placa[]>([]);
-  const [comprovanteDados, setComprovanteDados] = useState<any>(null);
+  const [comprovanteDados, setComprovanteDados] = useState<ComprovanteProps | null>(null);
 
   useEffect(() => {
     const fetchPlacas = async () => {
@@ -157,6 +156,11 @@ const TablePlaca: React.FC = () => {
 
     if (placa && cuponsAtivos.includes(placa.placa)) {
       alert("Este veículo já está estacionado.");
+      return;
+    }
+
+    if (!placa) {
+      console.error("Placa está indefinida");
       return;
     }
 
@@ -269,8 +273,8 @@ const TablePlaca: React.FC = () => {
                     onClick={() => estacionarPlaca(placa.id)}
                     disabled={cuponsAtivos.includes(placa.placa)}
                     className={`${cuponsAtivos.includes(placa.placa)
-                        ? "text-gray-500 cursor-not-allowed"
-                        : "text-blue-600 underline"
+                      ? "text-gray-500 cursor-not-allowed"
+                      : "text-blue-600 underline"
                       }`}
                     title={
                       cuponsAtivos.includes(placa.placa)
@@ -301,8 +305,8 @@ const TablePlaca: React.FC = () => {
                     onClick={() => estacionarPlaca(placa.id)}
                     disabled={cuponsAtivos.includes(placa.placa)}
                     className={`${cuponsAtivos.includes(placa.placa)
-                        ? "text-gray-500 cursor-not-allowed"
-                        : "text-blue-600 underline"
+                      ? "text-gray-500 cursor-not-allowed"
+                      : "text-blue-600 underline"
                       }`}
                     title={
                       cuponsAtivos.includes(placa.placa)
@@ -339,11 +343,9 @@ const TablePlaca: React.FC = () => {
             >
               Fechar
             </button>
-            
-              <button onClick={() => window.print()} className="bg-green-600 text-white px-4 py-2 mt-2 rounded-md hover:bg-green-700">
-                Imprimir Comprovante
-              </button>
-            
+            <button onClick={() => window.print()} className="bg-green-600 text-white px-4 py-2 mt-2 rounded-md hover:bg-green-700">
+              Imprimir Comprovante
+            </button>
           </div>
         </div>
       )}
