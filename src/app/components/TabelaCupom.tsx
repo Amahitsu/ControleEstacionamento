@@ -27,8 +27,8 @@ const TabelaCupom: React.FC = () => {
     const [tarifas, setTarifas] = useState<Tarifa[]>([]); // Lista de tarifas
     const [modalAberta, setModalAberta] = useState(false); // Controle do modal
     const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null); // Cupom em foco no modal
-
     const timezone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
+    
     const formatarDataMoment = (data: string): string => {
         return moment(data).tz(timezone).format("DD/MM/YYYY HH:mm:ss");
     };
@@ -87,10 +87,13 @@ const TabelaCupom: React.FC = () => {
             console.error("Tarifa inválida para o tipo de veículo");
             return 0;
         }
+        
+        const dataEntrada = moment(dataHoraEntrada).tz(timezone, true); // Cria um objeto Moment da dataHoraEntrada
+        const dataSaida = dataHoraSaida 
+            ? moment(dataHoraSaida).tz(timezone, true) // Cria um objeto Moment da dataHoraSaida
+            : moment().tz(timezone, true); // Usa a data e hora atuais se não houver data de saída
 
-        const dataEntrada = moment.utc(dataHoraEntrada);
-        const dataSaida = dataHoraSaida ? moment.utc(dataHoraSaida) : moment.utc();
-
+        // Calcula a diferença entre as duas datas
         const diferencaEmHoras = moment.duration(dataSaida.diff(dataEntrada)).asHours();
 
         if (diferencaEmHoras < 0) {
