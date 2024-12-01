@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
+    const {} = new URL(req.url);
+    
     // Obter a contagem de cupons abertos (sem hora de saída)
     const cuponsAbertosResult = await sql`
       SELECT COUNT(*) AS "cuponsAbertos"
