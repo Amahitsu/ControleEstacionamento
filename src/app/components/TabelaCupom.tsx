@@ -111,11 +111,9 @@ const TabelaCupom: React.FC = () => {
     };
     
     // Função que obtém o horário local atual no formato ISO
-    const obterHorarioLocal = () => {
-        const agora = new Date();
-        const offset = agora.getTimezoneOffset() * 60000; // Offset em milissegundos
-        const horarioLocal = new Date(agora.getTime() - offset);
-        return horarioLocal.toISOString().slice(0, 19).replace("T", " ");
+    const obterHorarioLocal = (): string => {
+        const horarioLocal = moment().tz(timezone);
+        return horarioLocal.format("YYYY-MM-DD HH:mm:ss");
     };
 
     const fecharModal = () => {
