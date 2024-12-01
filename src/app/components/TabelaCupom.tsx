@@ -28,8 +28,6 @@ const TabelaCupom: React.FC = () => {
     const [modalAberta, setModalAberta] = useState(false); // Controle do modal
     const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null); // Cupom em foco no modal
     const timezone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
-    
-  
 
     // Função para buscar cupons da API
     const fetchCupons = async () => {
@@ -90,7 +88,7 @@ const TabelaCupom: React.FC = () => {
         
         // Obter os objetos Moment para data de entrada e saída
         const dataEntrada = setTimezone(dataHoraEntrada);
-        const dataSaida = setTimezone(buscarHoraSaida());
+        const dataSaida = moment().tz(timezone);
     
         // Calcula a diferença entre as duas datas em horas
         const diferencaEmHoras = moment.duration(dataSaida.diff(dataEntrada)).asHours();
@@ -103,11 +101,6 @@ const TabelaCupom: React.FC = () => {
     
         const horasCobrar = Math.ceil(diferencaEmHoras); // Arredonda para cima
         return horasCobrar * valorTarifa;
-    };
-    
-    // Função para obter a hora de saída (horário local)
-    const buscarHoraSaida = () => {
-        return obterHorarioLocal(); // Retorna o horário local atual
     };
     
     // Função que obtém o horário local atual no formato ISO
@@ -212,7 +205,7 @@ const TabelaCupom: React.FC = () => {
                             <p><strong>Placa:</strong> {cupomSelecionado.placa}</p>
                             <p><strong>Valor Total: R$ </strong> {calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.idTipoVeiculo).toFixed(2)}</p>
                             <p><strong>Hora Entrada:</strong> {formatarDataMoment(cupomSelecionado.dataHoraEntrada)}</p>
-                            <p><strong>Hora Saída:</strong> {formatarDataMoment(buscarHoraSaida())}</p>
+                            <p><strong>Hora Saída:</strong> {formatarDataMoment(obterHorarioLocal())}</p>
                         </div>
 
                         <div className="flex justify-end space-x-4 mt-6">
