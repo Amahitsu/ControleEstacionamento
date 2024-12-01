@@ -66,43 +66,46 @@ const TabelaCupom: React.FC = () => {
         return tarifa ? tarifa.valor : 0;
     };
 
-  // Função que formata a data considerando o fuso horário
     const formatarDataMoment = (data: string): string => {
-        return moment(data).tz(timezone).format("DD/MM/YYYY HH:mm:ss");
+        return setTimezone(data).format("DD/MM/YYYY HH:mm:ss")
     };
 
+    const setTimezone = (data: string): moment.Moment => {
+        return moment(data).tz(timezone); // Retorna um objeto Moment com o fuso horário correto
+    };
+    
     // Função que calcula o valor total
     const calcularValorTotal = (
         dataHoraEntrada: string,
         idTipoVeiculo: string
     ): number => {
         const valorTarifa = obterTarifaPorTipoVeiculo(idTipoVeiculo);
-
+    
         if (valorTarifa <= 0) {
             console.error("Tarifa inválida para o tipo de veículo");
             return 0;
         }
-
-        // Ajuste para garantir que a dataHoraEntrada seja manipulada no fuso horário correto
-        const dataEntrada = moment(dataHoraEntrada).tz(timezone, true); // Passando `true` para que ele preserve a hora local
-        const dataSaida = moment().tz(timezone, true); // Hora local com timezone aplicado corretamente
-
+        
+        // Obter os objetos Moment para data de entrada e saída
+        const dataEntrada = setTimezone(dataHoraEntrada);
+        const dataSaida = moment().tz(timezone);
+    
         // Calcula a diferença entre as duas datas em horas
         const diferencaEmHoras = moment.duration(dataSaida.diff(dataEntrada)).asHours();
-
+    
         // Verifica se a data de saída é anterior à data de entrada
         if (diferencaEmHoras < 0) {
             console.error("A data de saída é anterior à data de entrada.");
             return 0;
         }
-
+    
         const horasCobrar = Math.ceil(diferencaEmHoras); // Arredonda para cima
         return horasCobrar * valorTarifa;
     };
-
+    
     // Função que obtém o horário local atual no formato ISO
     const obterHorarioLocal = (): string => {
-        const horarioLocal = moment().tz(timezone, true); // Hora local ajustada para a timezone correta
+        const horarioLocal = moment().tz(timezone);
         return horarioLocal.format("YYYY-MM-DD HH:mm:ss");
     };
 
