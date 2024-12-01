@@ -86,7 +86,7 @@ const TabelaCupom: React.FC = () => {
             console.error("Tarifa inválida para o tipo de veículo");
             return 0;
         }
-        
+
         // Obter os objetos Moment para data de entrada e saída
         const dataEntrada = setTimezone(dataHoraEntrada);
         const dataSaida = setTimezone(obterHorarioLocal());
@@ -107,10 +107,9 @@ const TabelaCupom: React.FC = () => {
         return horasCobrar * valorTarifa;
     };
     
-    // Função que obtém o horário local atual no formato ISO
     const obterHorarioLocal = (): string => {
         const horarioLocal = moment().tz(timezone);
-        return horarioLocal.format("YYYY-MM-DD HH:mm:ss");
+        return horarioLocal.toISOString();
     };
 
     const fecharModal = () => {
