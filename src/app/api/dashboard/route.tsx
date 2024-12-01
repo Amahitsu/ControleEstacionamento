@@ -4,46 +4,52 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const {} = new URL(req.url);
-    
-    // Obter a contagem de cupons abertos (sem hora de saída)
-    const cuponsAbertosResult = await sql`
-      SELECT COUNT(*) AS "cuponsAbertos"
+
+    const totalVeiculosEstacionadosResult = await sql`
+      SELECT COUNT(*) AS "totalEstacionados"
       FROM "cupom"
       WHERE "dataHoraSaida" IS NULL;
     `;
-    
-    // Obter a contagem total de cupons (todos)
-    const cuponsTotalResult = await sql`
-      SELECT COUNT(*) AS "cuponsTotal"
-      FROM "cupom";
+
+    const veiculosPorTipoResult = await sql`
+      SELECT tv."veiculo" AS "tipoVeiculo", COUNT(*) AS "quantidade"
+      FROM "cupom" c
+      JOIN "placa" p ON p.id = c."placaID"
+      JOIN "tipoVeiculo" tv ON tv.id = p."tipoVeiculoId"
+      WHERE c."dataHoraSaida" IS NULL
+      GROUP BY tv."veiculo";
     `;
 
-    // Obter todas as tarifas
-    const tarifasResult = await sql`
-      SELECT 
-        tv."id" AS "tipoVeiculoId", 
-        tv."veiculo" AS "tipoVeiculo", 
-        t."valor"
-      FROM "tipoVeiculo" tv
-      JOIN "tarifa" t ON t."tipoVeiculoId" = tv."id";
+    const totalAReceberPorTipoResult = await sql`
+      SELECT tv."veiculo" AS "tipoVeiculo", SUM(t."valor") AS "totalAReceber"
+      FROM "cupom" c
+      JOIN "placa" p ON p.id = c."placaID"
+      JOIN "tipoVeiculo" tv ON tv.id = p."tipoVeiculoId"
+      JOIN "tarifas" t ON t."tipoVeiculoId" = tv.id
+      WHERE c."dataHoraSaida" IS NULL
+      GROUP BY tv."veiculo";
     `;
-    
-    // Verificar se há resultados
-    if (!cuponsAbertosResult.rows || !cuponsTotalResult.rows || !tarifasResult.rows) {
-      throw new Error("Erro ao recuperar dados do banco.");
-    }
 
-    // Organizar as informações para retorno
-    const cuponsAbertos = cuponsAbertosResult.rows[0]?.cuponsAbertos ?? 0;
-    const cuponsTotal = cuponsTotalResult.rows[0]?.cuponsTotal ?? 0;
-    const tarifas = tarifasResult.rows.map(row => ({
+    const totalVeiculosEstacionados = totalVeiculosEstacionadosResult.rows[0]?.totalEstacionados ?? 0;
+
+    const veiculosPorTipo = veiculosPorTipoResult.rows.map(row => ({
       tipoVeiculo: row.tipoVeiculo,
-      valor: row.valor
+      quantidade: row.quantidade,
     }));
 
-    // Retornar as informações de cupons e tarifas
+    const totalAReceberPorTipo = totalAReceberPorTipoResult.rows.map(row => ({
+      tipoVeiculo: row.tipoVeiculo,
+      totalAReceber: row.totalAReceber,
+    }));
+
     return NextResponse.json(
-      { data: { cuponsAbertos, cuponsTotal, tarifas } },
+      {
+        data: {
+          totalVeiculosEstacionados,
+          veiculosPorTipo,
+          totalAReceberPorTipo
+        }
+      },
       { status: 200 }
     );
   } catch (error) {

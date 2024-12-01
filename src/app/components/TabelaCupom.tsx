@@ -91,9 +91,6 @@ const TabelaCupom: React.FC = () => {
         const dataEntrada = setTimezone(dataHoraEntrada);
         const dataSaida = setTimezone(obterHorarioLocal());
 
-        console.log("DataEntrada: " + dataEntrada.toString())
-        console.log("DataSaida: " + dataSaida.toString())
-
         // Calcula a diferença entre as duas datas em horas
         const diferencaEmHoras = moment.duration(dataSaida.diff(dataEntrada)).asHours();
     
@@ -109,7 +106,7 @@ const TabelaCupom: React.FC = () => {
     
     const obterHorarioLocal = (): string => {
         const horarioLocal = moment().tz(timezone);
-        return horarioLocal.toISOString();
+        return horarioLocal.format("YYYY-MM-DDTHH:mm:ss");
     };
 
     const fecharModal = () => {
@@ -201,10 +198,10 @@ const TabelaCupom: React.FC = () => {
 
             {modalAberta && cupomSelecionado && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-2/5">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-2/5">
                         <h2 className="text-lg font-bold mb-4">Cupom {cupomSelecionado.id}</h2>
 
-                        <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <p><strong>Placa:</strong> {cupomSelecionado.placa}</p>
                             <p><strong>Valor Total: R$ </strong> {calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.idTipoVeiculo).toFixed(2)}</p>
                             <p><strong>Hora Entrada:</strong> {formatarDataMoment(cupomSelecionado.dataHoraEntrada)}</p>

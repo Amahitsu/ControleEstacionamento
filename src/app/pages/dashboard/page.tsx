@@ -9,65 +9,66 @@ import {
   LinearScale,
   Tooltip,
 } from "chart.js";
-import React from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import React, { useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
 import Header from "../../components/Header";
 import styles from "../../styles/Home.module.css";
 
 // Registrar os componentes do Chart.js
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
 const Dashboard: React.FC = () => {
+  const [dashboardData, setDashboardData] = useState<any>(null);
+
+  useEffect(() => {
+    // Função para consultar a API
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/dashboard");
+        const data = await response.json();
+        if (data?.data) {
+          setDashboardData(data.data);
+        } else {
+          console.error("Erro ao carregar dados", data?.error);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados da API:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (!dashboardData) return (
+    <div className={styles.container}>
+      <Header />
+      <h1 className="px-5 pt-5 pb-0 font-bold">Dashboard</h1>
+      <main className={styles.mainContent}>Carregando...</main>
+    </div>
+  );
+
   // Dados para o gráfico de barras (veículos estacionados por tipo)
   const barChartData = {
-    labels: ["Carro", "Moto", "Caminhão"],
+    labels: dashboardData.veiculosPorTipo.map((item: any) => item.tipoVeiculo),
     datasets: [
       {
         label: "Veículos Estacionados",
-        data: [30, 15, 5], // Substitua pelos dados reais
+        data: dashboardData.veiculosPorTipo.map((item: any) => item.quantidade),
         backgroundColor: ["#3B82F6", "#10B981", "#F59E0B"],
       },
     ],
   };
 
-  // Calcula o total de veículos estacionados
-  const totalVeiculos = barChartData.datasets[0].data.reduce(
-    (total, value) => total + value,
-    0
-  );
-
-  // Dados para o gráfico de pizza (tarifas por tipo de veículo)
-  const pieChartData = {
-    labels: ["Carro", "Moto", "Caminhão"],
+  // Dados para o gráfico de barras (total a receber por tipo de veículo)
+  const barChartDataReceber = {
+    labels: dashboardData.totalAReceberPorTipo.map((item: any) => item.tipoVeiculo),
     datasets: [
       {
-        label: "Distribuição de Tarifas",
-        data: [500, 200, 300], // Substitua pelos dados reais
+        label: "Total a Receber",
+        data: dashboardData.totalAReceberPorTipo.map((item: any) => item.totalAReceber),
         backgroundColor: ["#3B82F6", "#10B981", "#F59E0B"],
       },
     ],
-  };
-
-  const barChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false, // Para garantir que o gráfico se ajuste
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
-  const pieChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false, // Para garantir que o gráfico se ajuste
   };
 
   return (
@@ -78,27 +79,21 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
           {/* Indicador de Total de Veículos Estacionados */}
           <div className="bg-white p-4 rounded-lg shadow-md flex flex-col justify-center items-center">
-            <h2 className="text-xl font-semibold mb-2">
-              Total de Veículos Estacionados
-            </h2>
-            <p className="text-5xl font-bold">{totalVeiculos}</p>
+            <h2 className="text-xl font-semibold mb-2">Total de Veículos Estacionados</h2>
+            <p className="text-5xl font-bold">{dashboardData.totalVeiculosEstacionados}</p>
           </div>
 
           <div className="bg-white shadow-md p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4">
-              Veículos Estacionados por Tipo
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">Veículos Estacionados por Tipo</h2>
             <div className="chart-container h-[300px]">
-              <Bar data={barChartData} options={barChartOptions} />
+              <Bar data={barChartData} options={{ responsive: true, maintainAspectRatio: false }} />
             </div>
           </div>
 
           <div className="bg-white shadow-md p-4 rounded-lg">
-            <h2 className="text-lg font-semibold mb-4">
-              Distribuição de Tarifas
-            </h2>
+            <h2 className="text-lg font-semibold mb-4">Total a Receber por Tipo de Veículo</h2>
             <div className="chart-container h-[300px]">
-              <Pie data={pieChartData} options={pieChartOptions} />
+              <Bar data={barChartDataReceber} options={{ responsive: true, maintainAspectRatio: false }} />
             </div>
           </div>
         </div>
