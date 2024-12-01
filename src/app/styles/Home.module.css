@@ -1,184 +1,200 @@
 /* styles/Home.module.css */
-
 .container {
-    width: 80%;
-    margin: 20px auto;
-    background-color: #fff;
-    border: 1px solid #ccc;
+  background-color: #fff;
+  width: 100%;
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    background-color: #e0e0e0;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
+  width: 100%;
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }
 
 .tableHeader {
-    background-color: #f6f6f6;
+  background-color: #f6f6f6;
 }
 
 .menu li,
 .pagination li {
-    display: inline-block;
+  display: inline-block;
 }
 
 .dateTime {
-    font-size: 14px;
-    min-width: 150px;
-}
-
-.statusIndicator {
-    width: 20px;
-    height: 20px;
-    background-color: green;
-    border-radius: 50%;
+  font-size: 14px;
+  min-width: 150px;
 }
 
 .mainContent {
-    display: flex;
-    padding: 20px;
-}
-
-.formSection {
-    width: 30%;
-    padding-right: 20px;
-    border-right: 1px solid #ccc;
-}
-
-.formSection input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.confirmButton {
-    width: 100%;
-    padding: 10px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 20px;
-}
-
-.colorButtons {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-}
-
-.button {
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
-}
-
-.blue {
-    background-color: blue;
-}
-
-.yellow {
-    background-color: yellow;
-}
-
-.red {
-    background-color: red;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 16px;
 }
 
 .tableSection {
-    width: 70%;
-    padding-left: 20px;
+  position: relative;
+  overflow: auto;
+  width: 100%;
 }
 
+.formSection {
+  width: 30%;
+  border-right: 1px solid #ccc;
+}
+
+.formSection {
+  width: 100%;
+  border-right: 0;
+}
+
+.formSection input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.confirmButton {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.colorButtons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.button {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.red {
+  background-color: red;
+}
 
 .redText {
-    color: red;
+  color: red;
 }
 
 /* Estilo para a Modal */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Garante que estará acima de outros elementos */
-  }
-  
-  .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    max-width: 400px;
-    width: 90%; /* Responsivo */
-  }
-  
-  .close-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .close-button:hover {
-    background-color: #28a745;
-  }
-  
-  /* Estilos para o botão "Liberar" */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Garante que estará acima de outros elementos */
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+  width: 90%; /* Responsivo */
+}
+
+.close-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  background-color: #28a745;
+}
+
+/* Estilos para o botão "Liberar" */
 .liberarButton {
-    padding: 10px 20px;
-    background-color: #28a745; /* Verde para o botão "Liberar" */
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  padding: 10px 20px;
+  background-color: #28a745; /* Verde para o botão "Liberar" */
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .liberarButton:hover {
-    background-color: #218838; /* Tom de verde mais escuro ao passar o mouse */
+  background-color: #218838; /* Tom de verde mais escuro ao passar o mouse */
 }
 
 .liberarButton:disabled {
-    background-color: #c6c6c6; /* Cor para o botão desabilitado */
-    cursor: not-allowed;
+  background-color: #c6c6c6; /* Cor para o botão desabilitado */
+  cursor: not-allowed;
 }
 
 .buttonGroup {
-    display: flex;
-    gap: 10px; /* Espaço entre os botões */
-    margin-top: 10px;
+  display: flex;
+  gap: 10px; /* Espaço entre os botões */
+  margin-top: 10px;
 }
 
 .liberarButton {
-    background-color: #4caf50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .cancelarButton {
-    background-color: #f44336;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #f44336;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Para tablets e desktops */
+@media (min-width: 768px) {
+  .container {
+    width: 80%;
+    margin: 20px auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+  }
+
+  .mainContent {
+    flex-direction: row;
+    gap: 24px;
+  }
+
+  .formSection {
+    width: 30%;
+    padding-right: 20px;
+    border-right: 1px solid #ccc;
+  }
 }

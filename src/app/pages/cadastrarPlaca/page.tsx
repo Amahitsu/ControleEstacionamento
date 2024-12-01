@@ -8,7 +8,7 @@ const PlacaCadastro: React.FC = () => {
   return (
     <div className={styles.container}>
       <Header />
-      <h1 className="px-5 pt-5 pb-0">Cadastrar Placa</h1>
+      <h1 className="px-5 pt-5 pb-0 font-bold">Cadastrar Placa</h1>
       <main className={styles.mainContent}>
         <CadastrarPlaca />
         <TablePlaca />

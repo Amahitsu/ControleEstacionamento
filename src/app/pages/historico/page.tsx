@@ -7,7 +7,7 @@ const Historico: React.FC = () => {
   return (
     <div className={styles.container}>
       <Header />
-      <h1 className="px-5 pt-5 pb-0">Histórico veículos estacionados</h1>
+      <h1 className="px-5 pt-5 pb-0 font-bold">Histórico veículos estacionados</h1>
       <main className={styles.mainContent}>
         <TableHistorico />
       </main>
