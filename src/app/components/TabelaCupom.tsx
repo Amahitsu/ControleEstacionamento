@@ -67,11 +67,12 @@ const TabelaCupom: React.FC = () => {
     };
 
     const formatarDataMoment = (data: string): string => {
-        return setTimezone(data).format("DD/MM/YYYY HH:mm:ss")
+        const dataTimezone = setTimezone(data);
+        return dataTimezone.format("DD/MM/YYYY HH:mm:ss")
     };
 
     const setTimezone = (data: string): moment.Moment => {
-        return moment(data).tz(timezone); // Retorna um objeto Moment com o fuso horário correto
+        return moment.tz(data, timezone);
     };
     
     // Função que calcula o valor total
@@ -88,8 +89,11 @@ const TabelaCupom: React.FC = () => {
         
         // Obter os objetos Moment para data de entrada e saída
         const dataEntrada = setTimezone(dataHoraEntrada);
-        const dataSaida = moment().tz(timezone);
-    
+        const dataSaida = setTimezone(obterHorarioLocal());
+
+        console.log("DataEntrada: " + dataEntrada.toString())
+        console.log("DataSaida: " + dataSaida.toString())
+
         // Calcula a diferença entre as duas datas em horas
         const diferencaEmHoras = moment.duration(dataSaida.diff(dataEntrada)).asHours();
     
