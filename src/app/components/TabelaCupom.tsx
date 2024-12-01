@@ -28,10 +28,10 @@ const TabelaCupom: React.FC = () => {
     const [modalAberta, setModalAberta] = useState(false); // Controle do modal
     const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null); // Cupom em foco no modal
 
-    // Função para formatar datas usando moment-timezone
+    const timezone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
     const formatarDataMoment = (data: string): string => {
-        return moment(data).format("DD/MM/YYYY HH:mm:ss");
-    };    
+        return moment(data).tz(timezone).format("DD/MM/YYYY HH:mm:ss");
+    };
 
     // Função para buscar cupons da API
     const fetchCupons = async () => {

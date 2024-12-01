@@ -21,10 +21,10 @@ const TabelaHistorico: React.FC = () => {
     // Estados da tabela e do modal
     const [historico, setHistorico] = useState<Historico[]>([]); // Histórico de veículos estacionados
 
-    // Função para formatar datas usando moment-timezone
+    const timezone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "UTC";
     const formatarDataMoment = (data: string): string => {
-        return moment(data).format("DD/MM/YYYY HH:mm:ss");
-    };    
+        return moment(data).tz(timezone).format("DD/MM/YYYY HH:mm:ss");
+    };  
 
     const fetchHistorico = async () => {
         try {
