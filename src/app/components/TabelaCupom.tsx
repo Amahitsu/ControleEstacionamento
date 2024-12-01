@@ -30,8 +30,8 @@ const TabelaCupom: React.FC = () => {
 
     // Função para formatar datas usando moment-timezone
     const formatarDataMoment = (data: string): string => {
-        return moment.utc(data).tz("America/Sao_Paulo").format("DD/MM/YYYY HH:mm:ss");
-    };
+        return moment(data).format("DD/MM/YYYY HH:mm:ss");
+    };    
 
     // Função para buscar cupons da API
     const fetchCupons = async () => {

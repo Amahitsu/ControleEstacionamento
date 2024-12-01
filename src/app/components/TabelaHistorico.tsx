@@ -23,8 +23,8 @@ const TabelaHistorico: React.FC = () => {
 
     // Função para formatar datas usando moment-timezone
     const formatarDataMoment = (data: string): string => {
-        return moment.utc(data).tz("America/Sao_Paulo").format("DD/MM/YYYY HH:mm:ss");
-    };
+        return moment(data).format("DD/MM/YYYY HH:mm:ss");
+    };    
 
     const fetchHistorico = async () => {
         try {
