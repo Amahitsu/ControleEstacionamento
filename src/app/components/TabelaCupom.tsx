@@ -29,9 +29,7 @@ const TabelaCupom: React.FC = () => {
     const [cupomSelecionado, setCupomSelecionado] = useState<Cupom | null>(null); // Cupom em foco no modal
     const timezone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
     
-    const formatarDataMoment = (data: string): string => {
-        return moment(data).tz(timezone).format("DD/MM/YYYY HH:mm:ss");
-    };
+  
 
     // Função para buscar cupons da API
     const fetchCupons = async () => {
@@ -65,44 +63,59 @@ const TabelaCupom: React.FC = () => {
         fetchTarifas();
     }, []);
 
-    // Função para abrir o modal ao liberar cupom
-    const liberarCupom = (cupom: Cupom) => {
-        setCupomSelecionado(cupom); // Define o cupom selecionado
-        setModalAberta(true); // Abre o modal
-    };
-
     const obterTarifaPorTipoVeiculo = (idTipoVeiculo: string): number => {
         const tarifa = tarifas.find((t) => t.tipoVeiculoId === idTipoVeiculo);
         return tarifa ? tarifa.valor : 0;
     };
 
+    const formatarDataMoment = (data: string): string => {
+        return setTimezone(data).format("DD/MM/YYYY HH:mm:ss")
+    };
+
+    const setTimezone = (data: string): moment.Moment => {
+        return moment(data).tz(timezone); // Retorna um objeto Moment com o fuso horário correto
+    };
+    
+    // Função que calcula o valor total
     const calcularValorTotal = (
         dataHoraEntrada: string,
-        dataHoraSaida: string | null,
         idTipoVeiculo: string
     ): number => {
         const valorTarifa = obterTarifaPorTipoVeiculo(idTipoVeiculo);
-
+    
         if (valorTarifa <= 0) {
             console.error("Tarifa inválida para o tipo de veículo");
             return 0;
         }
         
-        const dataEntrada = moment(dataHoraEntrada).tz(timezone, true); // Cria um objeto Moment da dataHoraEntrada
-        const dataSaida = dataHoraSaida 
-            ? moment(dataHoraSaida).tz(timezone, true) // Cria um objeto Moment da dataHoraSaida
-            : moment().tz(timezone, true); // Usa a data e hora atuais se não houver data de saída
-
-        // Calcula a diferença entre as duas datas
+        // Obter os objetos Moment para data de entrada e saída
+        const dataEntrada = setTimezone(dataHoraEntrada);
+        const dataSaida = setTimezone(buscarHoraSaida());
+    
+        // Calcula a diferença entre as duas datas em horas
         const diferencaEmHoras = moment.duration(dataSaida.diff(dataEntrada)).asHours();
-
+    
+        // Verifica se a data de saída é anterior à data de entrada
         if (diferencaEmHoras < 0) {
             console.error("A data de saída é anterior à data de entrada.");
             return 0;
         }
-
-        const horasCobrar = Math.ceil(diferencaEmHoras);
+    
+        const horasCobrar = Math.ceil(diferencaEmHoras); // Arredonda para cima
         return horasCobrar * valorTarifa;
+    };
+    
+    // Função para obter a hora de saída (horário local)
+    const buscarHoraSaida = () => {
+        return obterHorarioLocal(); // Retorna o horário local atual
+    };
+    
+    // Função que obtém o horário local atual no formato ISO
+    const obterHorarioLocal = () => {
+        const agora = new Date();
+        const offset = agora.getTimezoneOffset() * 60000; // Offset em milissegundos
+        const horarioLocal = new Date(agora.getTime() - offset);
+        return horarioLocal.toISOString().slice(0, 19).replace("T", " ");
     };
 
     const fecharModal = () => {
@@ -110,15 +123,10 @@ const TabelaCupom: React.FC = () => {
         setCupomSelecionado(null);
     };
 
-    const buscarHoraSaida = () => {
-        return formatarDataMoment(new Date().toISOString());
-    }
-
-    const obterHorarioLocal = () => {
-        const agora = new Date();
-        const offset = agora.getTimezoneOffset() * 60000; // Offset em milissegundos
-        const horarioLocal = new Date(agora.getTime() - offset);
-        return horarioLocal.toISOString().slice(0, 19).replace("T", " ");
+    // Função para abrir o modal ao liberar cupom
+    const liberarCupom = (cupom: Cupom) => {
+        setCupomSelecionado(cupom); // Define o cupom selecionado
+        setModalAberta(true); // Abre o modal
     };
 
     const liberarCupomNoBanco = async () => {
@@ -128,7 +136,6 @@ const TabelaCupom: React.FC = () => {
         try {
             const valorTotal = calcularValorTotal(
                 cupomSelecionado.dataHoraEntrada,
-                new Date().toISOString(),
                 cupomSelecionado.idTipoVeiculo
             );
 
@@ -179,7 +186,6 @@ const TabelaCupom: React.FC = () => {
                             <td>
                                 R$ {calcularValorTotal(
                                     cupom.dataHoraEntrada,
-                                    cupom.dataHoraSaida,
                                     cupom.idTipoVeiculo
                                 ).toFixed(2)}
                             </td>
@@ -206,10 +212,9 @@ const TabelaCupom: React.FC = () => {
 
                         <div className="grid grid-cols-2 gap-4 mb-4">
                             <p><strong>Placa:</strong> {cupomSelecionado.placa}</p>
-                            <p><strong>Valor Total: R$ </strong> {calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.dataHoraSaida, cupomSelecionado.idTipoVeiculo).toFixed(2)}</p>
-
+                            <p><strong>Valor Total: R$ </strong> {calcularValorTotal(cupomSelecionado.dataHoraEntrada, cupomSelecionado.idTipoVeiculo).toFixed(2)}</p>
                             <p><strong>Hora Entrada:</strong> {formatarDataMoment(cupomSelecionado.dataHoraEntrada)}</p>
-                            <p><strong>Hora Saída:</strong> {buscarHoraSaida()}</p>
+                            <p><strong>Hora Saída:</strong> {formatarDataMoment(buscarHoraSaida())}</p>
                         </div>
 
                         <div className="flex justify-end space-x-4 mt-6">
