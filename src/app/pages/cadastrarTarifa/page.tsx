@@ -8,7 +8,7 @@ const TarifaCadastro: React.FC = () => {
   return (
     <div className={styles.container}>
       <Header />
-      <h1 className="px-5 pt-5 pb-0">Cadastrar Tarifa</h1>
+      <h1 className="px-5 pt-5 pb-0 font-bold">Cadastrar Tarifa</h1>
       <main className={styles.mainContent}>
         <CadastrarTarifa />
         <TabelaTarifas />

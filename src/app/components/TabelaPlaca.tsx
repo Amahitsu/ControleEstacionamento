@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { apiUrls } from "../config/config";
+import styles from '../styles/Home.module.css';
 
 interface Placa {
   id: number;
@@ -227,11 +228,11 @@ const TablePlaca: React.FC = () => {
   };
 
   return (
-    <div className="relative p-4">
+    <div class="w-full">
       <div className="flex justify-end mb-4">
         <input
           type="text"
-          className="border border-gray-300 rounded-md px-2 py-1 mr-2 w-full max-w-[300px]"
+          className="rounded-md px-2 py-1 mr-2 w-full max-w-[300px]"
           placeholder="Buscar placa"
           value={placaBusca}
           onChange={(e) => setPlacaBusca(e.target.value)}
@@ -250,7 +251,8 @@ const TablePlaca: React.FC = () => {
         </button>
       </div>
 
-      <table className="table-auto w-full border border-gray-300">
+    <div className={styles.tableSection}>
+      <table className="table-auto">
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2">Placa</th>
@@ -263,7 +265,7 @@ const TablePlaca: React.FC = () => {
         <tbody>
           {resultadoBusca.length > 0 ? (
             resultadoBusca.map((placa) => (
-              <tr key={placa.id} className="border-t border-gray-300">
+              <tr key={placa.id}>
                 <td className="px-4 py-2">{placa.placa}</td>
                 <td className="px-4 py-2">{obterNomeTipoVeiculo(placa.tipoVeiculoId)}</td>
                 <td className="px-4 py-2">{obterNomeModelo(placa.modeloId)}</td>
@@ -295,7 +297,7 @@ const TablePlaca: React.FC = () => {
             ))
           ) : (
             placas.map((placa) => (
-              <tr key={placa.id} className="border-t border-gray-300">
+              <tr key={placa.id}>
                 <td className="px-4 py-2">{placa.placa}</td>
                 <td className="px-4 py-2">{obterNomeTipoVeiculo(placa.tipoVeiculoId)}</td>
                 <td className="px-4 py-2">{obterNomeModelo(placa.modeloId)}</td>
@@ -328,7 +330,7 @@ const TablePlaca: React.FC = () => {
           )}
         </tbody>
       </table>
-
+      </div>
       {/* Modal Sucesso */}
       {modalAberta && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
