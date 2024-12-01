@@ -228,7 +228,7 @@ const TablePlaca: React.FC = () => {
   };
 
   return (
-    <div class="w-full">
+    <div className="w-full">
       <div className="flex justify-end mb-4">
         <input
           type="text"

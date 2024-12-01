@@ -32,6 +32,7 @@ const Header: React.FC = () => {
           <li><a href="/">Veículos estacionados</a></li>
           <li><a href="/pages/historico">Histórico</a></li>
           <li><a href="/pages/cadastrarTarifa">Tarifas</a></li>
+          <li><a href="/pages/dashboard">Dashboard</a></li>
         </ul>
 
         {/* Indicador de status */}

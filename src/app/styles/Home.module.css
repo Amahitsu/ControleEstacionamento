@@ -198,3 +198,19 @@
     border-right: 1px solid #ccc;
   }
 }
+
+.chart-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.bg-white {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.bg-white .chart-container {
+  height: 300px; /* Ajuste conforme necessário */
+  width: 100%;
+}
