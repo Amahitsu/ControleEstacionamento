@@ -7,11 +7,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const id = searchParams.get("id");
     const placa = searchParams.get("placa");
 
-    // Define consulta SQL com base nos parâmetros fornecidos
     let result;
 
     if (id) {
-      // Consulta por ID
       result = await sql`
         SELECT 
             c.id AS "id",
@@ -33,7 +31,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             c.id = ${id};
       `;
     } else if (placa) {
-      // Consulta por placa
       result = await sql`
         SELECT 
             c.id AS "id",
@@ -56,7 +53,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             AND p."placa" = ${placa};
       `;
     } else {
-      // Consulta geral
       result = await sql`
         SELECT 
             c.id AS "id",
@@ -79,7 +75,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       `;
     }
 
-    // Verifica se há registros
     if (result.rows.length === 0) {
       return NextResponse.json(
         { message: "Nenhum registro encontrado." },

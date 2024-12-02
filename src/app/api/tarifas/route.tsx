@@ -43,10 +43,10 @@ export async function GET(): Promise<NextResponse> {
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
-    // Extrair os dados do corpo da requisição
+    
     const { horaCobrada, tipoVeiculo, valor } = await request.json();
 
-    // Validação simples para evitar que campos obrigatórios estejam vazios
+    
     if (!horaCobrada || !tipoVeiculo || valor === undefined) {
       return NextResponse.json(
         { message: "Campos faltando ou inválidos" },
@@ -54,7 +54,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    // Consultar o ID do tipo de veículo pelo nome
+    
     const tipoVeiculoResult = await sql`
       SELECT id FROM "tipoVeiculo" WHERE "veiculo" = ${tipoVeiculo}
     `;
@@ -63,10 +63,10 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
     const tipoVeiculoId = tipoVeiculoResult.rows[0].id;
 
-    // Formatação para garantir que `valor` seja numérico
+    
     const valorNumerico = parseFloat(valor);
 
-    // Executar a consulta SQL para inserir os dados
+    
     const { rows } = await sql`
       INSERT INTO tarifas ("horaCobrada", "tipoVeiculoId", "valor")
       VALUES (${horaCobrada}, ${tipoVeiculoId}, ${valorNumerico})
@@ -75,7 +75,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json({ data: rows }, { status: 200 });
   } catch (error: unknown) {
-    // Captura o erro e exibe uma mensagem detalhada
+    
     const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
     console.error("Erro ao adicionar tarifa:", errorMessage);
     return NextResponse.json({ message: errorMessage }, { status: 500 });

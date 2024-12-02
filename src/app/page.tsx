@@ -1,4 +1,4 @@
-// src/app/page.tsx
+
 import { Metadata } from 'next';
 import FormSection from '../app/components/FormSection';
 import Header from '../app/components/Header';

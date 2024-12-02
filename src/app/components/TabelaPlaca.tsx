@@ -34,16 +34,16 @@ interface ComprovanteProps {
   tipoVeiculo: string;
   modelo: string;
   cor: string;
-  dataHoraEntrada: string; // Ou Date, dependendo de como você está passando
+  dataHoraEntrada: string; 
   idCupom: number;
 }
 
 const Comprovante: React.FC<ComprovanteProps> = ({ placa, tipoVeiculo, modelo, cor, dataHoraEntrada, idCupom }) => {
-  // Função para formatar a data e hora
+  
   const formatarDataHora = (dataHora: string) => {
     const data = new Date(dataHora);
     const dia = String(data.getDate()).padStart(2, '0');
-    const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês começa do zero
+    const mes = String(data.getMonth() + 1).padStart(2, '0'); 
     const ano = data.getFullYear();
     const horas = String(data.getHours()).padStart(2, '0');
     const minutos = String(data.getMinutes()).padStart(2, '0');
@@ -180,7 +180,7 @@ const TablePlaca: React.FC = () => {
       });
 
       if (response.ok) {
-        const responseData = await response.json(); // Assumindo que o ID do cupom está na resposta
+        const responseData = await response.json(); 
         const idCupom = responseData.data.id;
 
         const placaEstacionada = placas.find((placa) => placa.id === id)?.placa;

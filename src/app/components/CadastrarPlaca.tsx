@@ -11,9 +11,9 @@ const FormSection: React.FC = () => {
   const [color, setColor] = useState("");
   const [modelos, setModelos] = useState<{ nomeModelo: string }[]>([]);
   const [tiposVeiculo, setTiposVeiculo] = useState<{ veiculo: string }[]>([]);
-  const [modalAberta, setModalAberta] = useState(false); // Modal de sucesso
-  const [modalErroAberta, setModalErroAberta] = useState(false); // Modal de erro
-  const [mensagemErro, setMensagemErro] = useState(""); // Mensagem para a modal de erro
+  const [modalAberta, setModalAberta] = useState(false);
+  const [modalErroAberta, setModalErroAberta] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState("");
 
   interface Carro {
     placa: string;
@@ -68,10 +68,11 @@ const FormSection: React.FC = () => {
     }
 
     try {
-      const placaMaiuscula = placa.toUpperCase(); // Convertendo a placa para maiúscula
+      const placaMaiuscula = placa.toUpperCase();
 
-      // Verifica se a placa já existe
-      const responseCheck = await fetch(`${apiUrls.placas}?placa=${placaMaiuscula}`);
+      const responseCheck = await fetch(
+        `${apiUrls.placas}?placa=${placaMaiuscula}`
+      );
       if (!responseCheck.ok) {
         throw new Error("Erro ao verificar a existência da placa");
       }
@@ -79,9 +80,10 @@ const FormSection: React.FC = () => {
       const dataCheck = await responseCheck.json();
       console.log("Resultado da verificação:", dataCheck);
 
-      // Valida se a placa já existe
       const placaExistente =
-        dataCheck?.data && Array.isArray(dataCheck.data) && dataCheck.data.some((carro: Carro) => carro.placa === placaMaiuscula);
+        dataCheck?.data &&
+        Array.isArray(dataCheck.data) &&
+        dataCheck.data.some((carro: Carro) => carro.placa === placaMaiuscula);
 
       if (placaExistente) {
         setMensagemErro("A placa já está cadastrada. Por favor, insira outra.");
@@ -89,14 +91,13 @@ const FormSection: React.FC = () => {
         return;
       }
 
-      // Adiciona o veículo se a placa não existir
       const response = await fetch(apiUrls.placas, {
         headers: {
           "Content-Type": "application/json",
         },
         method: "POST",
         body: JSON.stringify({
-          placa: placaMaiuscula, // Enviando a placa em maiúsculas
+          placa: placaMaiuscula,
           modeloId: modelo,
           tipoVeiculoId: tipoVeiculo,
           cor: color,
@@ -108,9 +109,8 @@ const FormSection: React.FC = () => {
       const newCar = await response.json();
       console.log("Veículo adicionado:", newCar);
 
-      setModalAberta(true); // Abre a modal de sucesso
+      setModalAberta(true);
 
-      // Limpa os campos do formulário após o sucesso
       setPlaca("");
       setTipoVeiculo("");
       setModelo("");
@@ -128,7 +128,7 @@ const FormSection: React.FC = () => {
         type="text"
         placeholder="Placa"
         value={placa}
-        onChange={(e) => setPlaca(e.target.value.toUpperCase())} // Convertendo para maiúsculas enquanto digita
+        onChange={(e) => setPlaca(e.target.value.toUpperCase())}
         maxLength={7}
       />
       <select
@@ -193,7 +193,7 @@ const FormSection: React.FC = () => {
                 setModalAberta(false);
                 window.location.reload();
               }}
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
             >
               Fechar
             </button>

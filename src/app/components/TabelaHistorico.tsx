@@ -1,11 +1,11 @@
 "use client";
 
-import moment from "moment-timezone"; // Import para manipulação de datas
+import moment from "moment-timezone"; 
 import React, { useEffect, useState } from "react";
 import { apiUrls } from "../config/config";
 import styles from "../styles/Home.module.css";
 
-// Interfaces para os dados
+
 interface Historico {
     id: number;
     dataHoraEntrada: string;
@@ -18,8 +18,8 @@ interface Historico {
 }
 
 const TabelaHistorico: React.FC = () => {
-    // Estados da tabela e do modal
-    const [historico, setHistorico] = useState<Historico[]>([]); // Histórico de veículos estacionados
+    
+    const [historico, setHistorico] = useState<Historico[]>([]); 
 
     const timezone = process.env.NEXT_PUBLIC_CUSTOM_TIMEZONE || "America/Sao_Paulo";
     const formatarDataMoment = (data: string): string => {
@@ -28,18 +28,18 @@ const TabelaHistorico: React.FC = () => {
 
     const fetchHistorico = async () => {
         try {
-            const response = await fetch(apiUrls.historico); // Busca na API de cupons
+            const response = await fetch(apiUrls.historico); 
             if (!response.ok) throw new Error("Erro ao buscar histórico");
 
             const data = await response.json();
-            setHistorico(data.data); // Atualiza a lista de cupons
+            setHistorico(data.data); 
         } catch (error) {
             console.error("Erro ao buscar histórico:", error);
         }
     };
 
 
-    // useEffect para carregar os dados ao montar o componente
+
     useEffect(() => {
         fetchHistorico();
     }, []);

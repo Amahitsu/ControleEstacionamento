@@ -14,7 +14,6 @@ import { Bar } from "react-chartjs-2";
 import Header from "../../components/Header";
 import styles from "../../styles/Home.module.css";
 
-// Registrar os componentes do Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -41,7 +40,9 @@ const Dashboard: React.FC = () => {
     totalVeiculosEstacionados: number | { totalVeiculosEstacionados: number }[];
   }
 
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,20 +65,21 @@ const Dashboard: React.FC = () => {
     fetchData();
   }, []);
 
-  if (!dashboardData) return (
-    <div className={styles.container}>
-      <Header />
-      <h1 className="px-5 pt-5 pb-0 font-bold">Dashboard</h1>
-      <main className={styles.mainContent}>Carregando...</main>
-    </div>
-  );
+  if (!dashboardData)
+    return (
+      <div className={styles.container}>
+        <Header />
+        <h1 className="px-5 pt-5 pb-0 font-bold">Dashboard</h1>
+        <main className={styles.mainContent}>Carregando...</main>
+      </div>
+    );
 
-  // Acessando o totalVeiculosEstacionados corretamente
-  const totalVeiculosEstacionados = Array.isArray(dashboardData.totalVeiculosEstacionados)
+  const totalVeiculosEstacionados = Array.isArray(
+    dashboardData.totalVeiculosEstacionados
+  )
     ? dashboardData.totalVeiculosEstacionados[0]?.totalVeiculosEstacionados || 0
     : dashboardData.totalVeiculosEstacionados || 0;
 
-  // Dados para o gráfico de barras (veículos estacionados por tipo)
   const barChartData = {
     labels: dashboardData.veiculosPorTipo.map(
       (item: VeiculoPorTipo) => item.tipoVeiculo
@@ -93,7 +95,6 @@ const Dashboard: React.FC = () => {
     ],
   };
 
-  // Dados para o gráfico de barras (total a receber por tipo de veículo)
   const barChartDataReceber = {
     labels: dashboardData.totalAReceberPorTipo.map(
       (item: TotalAReceberPorTipo) => item.tipoVeiculo

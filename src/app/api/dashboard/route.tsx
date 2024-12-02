@@ -30,14 +30,15 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       GROUP BY tv."veiculo";
     `;
 
-    const totalVeiculosEstacionados = totalVeiculosEstacionadosResult.rows[0]?.totalEstacionados ?? 0;
+    const totalVeiculosEstacionados =
+      totalVeiculosEstacionadosResult.rows[0]?.totalEstacionados ?? 0;
 
-    const veiculosPorTipo = veiculosPorTipoResult.rows.map(row => ({
+    const veiculosPorTipo = veiculosPorTipoResult.rows.map((row) => ({
       tipoVeiculo: row.tipoVeiculo,
       quantidade: row.quantidade,
     }));
 
-    const totalAReceberPorTipo = totalAReceberPorTipoResult.rows.map(row => ({
+    const totalAReceberPorTipo = totalAReceberPorTipoResult.rows.map((row) => ({
       tipoVeiculo: row.tipoVeiculo,
       totalAReceber: row.totalAReceber,
     }));
@@ -47,8 +48,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         data: {
           totalVeiculosEstacionados,
           veiculosPorTipo,
-          totalAReceberPorTipo
-        }
+          totalAReceberPorTipo,
+        },
       },
       { status: 200 }
     );

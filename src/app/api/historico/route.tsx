@@ -3,10 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
-    // Obter o parâmetro "placa" da URL
     const {} = new URL(req.url);
 
-    // Se o parâmetro "placa" foi fornecido, adicionar a cláusula WHERE com segurança
     const result = await sql`
           SELECT 
               c.id AS "id",
@@ -31,7 +29,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
               c."dataHoraSaida" DESC;
         `;
 
-    // Acessar `rows` do resultado e verificar se há registros
     if (result.rows.length === 0) {
       return NextResponse.json(
         { message: "Nenhum registro encontrado para a placa especificada." },
